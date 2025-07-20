@@ -498,7 +498,7 @@ public class FloatingOverlayWindow extends JFrame {
              }
              
              // Update inventory color based on percentage (reversed logic)
-             int invPercent = playerInfo.getInventoryUsage();
+             int invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
              if (invPercent <= 10) { // 10% or less is red (danger - almost empty)
                  inventoryLabel.setForeground(DANGER_COLOR);
              } else if (invPercent <= 50) {

@@ -9,7 +9,7 @@ public class PlayerInfo {
     private int currentPrayer = 0;
     private int maxPrayer = 0;
     private boolean idle = false;
-    private int inventoryUsage = 0;
+    private int inventoryUsedSlots = 0;
     private String characterName = "";
     private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
 
@@ -36,8 +36,9 @@ public class PlayerInfo {
     }
 
     public String getInventoryText() {
-        int usedSlots = (inventoryUsage * 28) / 100;
-        return String.format("%d/28 (%d%%)", usedSlots, inventoryUsage);
+        int totalSlots = 28;
+        int usagePercentage = (inventoryUsedSlots * 100) / totalSlots;
+        return String.format("%d/28 (%d%%)", inventoryUsedSlots, usagePercentage);
     }
     
     public String getActiveProtectionPrayer() {

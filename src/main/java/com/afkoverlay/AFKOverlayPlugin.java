@@ -189,24 +189,24 @@ public class AFKOverlayPlugin extends Plugin {
                         usedSlots++;
                     }
                 }
+                // Fix: Calculate percentage based on used slots, not total slots
                 int totalSlots = 28; // RuneScape inventory has 28 slots
-                int usagePercentage = (usedSlots * 100) / totalSlots;
-                playerInfo.setInventoryUsage(usagePercentage);
-                log.debug("Inventory: {} used slots out of {}, {}%", usedSlots, totalSlots, usagePercentage);
+                playerInfo.setInventoryUsedSlots(usedSlots);
+                log.debug("Inventory: {} used slots out of {}", usedSlots, totalSlots);
             } else {
-                playerInfo.setInventoryUsage(0);
+                playerInfo.setInventoryUsedSlots(0);
                 log.debug("Inventory container is null or has no items");
             }
         } catch (Exception e) {
             // If there's any error, set to 0
-            playerInfo.setInventoryUsage(0);
+            playerInfo.setInventoryUsedSlots(0);
             log.debug("Error getting inventory: {}", e.getMessage());
         }
     }
 
     private void updateCharacterName(Player player) {
         String name = player.getName();
-        if (!name.equals(playerInfo.getCharacterName())) {
+        if (name != null && !name.equals(playerInfo.getCharacterName())) {
             playerInfo.setCharacterName(name);
             log.debug("Character name updated: {}", name);
         }
