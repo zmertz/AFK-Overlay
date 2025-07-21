@@ -41,6 +41,8 @@ public class AFKOverlayPlugin extends Plugin {
 
     private FloatingOverlayWindow floatingWindow;
     private PlayerInfo playerInfo;
+    // Track consecutive idle ticks
+    private int consecutiveIdleTicks = 0;
 
     @Override
     protected void startUp() throws Exception {
@@ -48,6 +50,7 @@ public class AFKOverlayPlugin extends Plugin {
         
         // Initialize player info
         playerInfo = new PlayerInfo();
+        consecutiveIdleTicks = 0;
         
         // Create and show floating overlay window
         SwingUtilities.invokeLater(() -> {
@@ -86,6 +89,7 @@ public class AFKOverlayPlugin extends Plugin {
                 floatingWindow = null;
             });
         }
+        consecutiveIdleTicks = 0;
     }
 
     @Subscribe
@@ -143,7 +147,15 @@ public class AFKOverlayPlugin extends Plugin {
 
         // Update idle status - check if player is performing any action
         boolean isIdle = isPlayerIdle(player);
-        playerInfo.setIdle(isIdle);
+        if (isIdle) {
+            consecutiveIdleTicks++;
+            if (consecutiveIdleTicks >= 2) {
+                playerInfo.setIdle(true);
+            }
+        } else {
+            consecutiveIdleTicks = 0;
+            playerInfo.setIdle(false);
+        }
 
         // Update inventory usage
         updateInventoryUsage();
