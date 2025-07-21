@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.swing.SwingUtilities;
 import java.awt.Image;
 import java.io.IOException;
+import java.time.Instant;
 
 @Slf4j
 @PluginDescriptor(
@@ -43,6 +44,8 @@ public class AFKOverlayPlugin extends Plugin {
     private PlayerInfo playerInfo;
     // Track consecutive idle ticks
     private int consecutiveIdleTicks = 0;
+    // Track the last time the player was active
+    private Instant lastActive = Instant.now();
 
     @Override
     protected void startUp() throws Exception {
@@ -145,16 +148,20 @@ public class AFKOverlayPlugin extends Plugin {
             playerInfo.setMaxPrayer(maxPrayer);
         }
 
-        // Update idle status - check if player is performing any action
-        boolean isIdle = isPlayerIdle(player);
-        if (isIdle) {
-            consecutiveIdleTicks++;
-            if (consecutiveIdleTicks >= 3) {
-                playerInfo.setIdle(true);
-            }
-        } else {
-            consecutiveIdleTicks = 0;
+        // Idle detection using Instant.now()
+        boolean isIdleNow = isPlayerIdle(player);
+        Instant now = Instant.now();
+        if (!isIdleNow) {
+            lastActive = now;
             playerInfo.setIdle(false);
+        } else {
+            long millisSinceActive = java.time.Duration.between(lastActive, now).toMillis();
+            int idleThreshold = config.idleThresholdMs();
+            if (millisSinceActive >= idleThreshold) {
+                playerInfo.setIdle(true);
+            } else {
+                playerInfo.setIdle(false);
+            }
         }
 
         // Update inventory usage
@@ -176,17 +183,27 @@ public class AFKOverlayPlugin extends Plugin {
     }
 
     private boolean isPlayerIdle(Player player) {
-        // Check if player is performing any action
-        if (player.getAnimation() != -1) {
-            return false; // Player is animating (fishing, woodcutting, etc.)
+        // Get the player's current animation, pose, and idle pose
+        int animation = player.getAnimation();
+        int pose = player.getPoseAnimation();
+        int idlePose = player.getIdlePoseAnimation();
+
+        // If the player is performing any animation (e.g., skilling, combat), they are active
+        if (animation != -1) {
+            return false;
         }
-        
-        // Check if player is in combat or interacting
+
+        // If the player's pose is not the idle pose, they are moving (walking/running), so they are active
+        if (pose != idlePose) {
+            return false;
+        }
+
+        // If the player is interacting with something (combat, etc.), they are active
         if (player.getInteracting() != null) {
-            return false; // Player is interacting with something (combat, etc.)
+            return false;
         }
-        
-        // If no animation, no interaction, player is idle
+
+        // If no animation, pose is idle, and not interacting, player is idle
         return true;
     }
 

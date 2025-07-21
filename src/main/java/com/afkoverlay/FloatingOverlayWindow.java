@@ -81,11 +81,21 @@ public class FloatingOverlayWindow extends JFrame {
                     0, 0, getWidth(), getHeight(), 12, 12);
                 
                 // Fill background with dark theme and opacity
-                Color backgroundColor;
-                if (config.highlightIdleBackground() && playerInfo.isIdle()) {
-                    backgroundColor = config.idleBackgroundColor();
-                } else {
-                    backgroundColor = new Color(30, 30, 30, config.opacity());
+                Color backgroundColor = new Color(30, 30, 30, config.opacity()); // Default
+                // Priority: HP > Prayer > Status
+                int hpPercent = playerInfo.getHpPercentage();
+                int prayerPercent = playerInfo.getPrayerPercentage();
+                // int invPercent = 0; // No longer needed
+                // try {
+                //     invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
+                // } catch (Exception ignored) {}
+
+                if (config.highlightHpBackground() && hpPercent <= config.lowHpPercentThreshold()) {
+                    backgroundColor = config.lowHpOverlayColor();
+                } else if (config.highlightPrayerBackground() && prayerPercent <= config.lowPrayerPercentThreshold()) {
+                    backgroundColor = config.lowPrayerOverlayColor();
+                } else if (config.highlightIdleBackground() && playerInfo.isIdle()) {
+                    backgroundColor = config.idleOverlayColor();
                 }
                 g2d.setColor(backgroundColor);
                 g2d.fill(roundedRectangle);
