@@ -149,7 +149,7 @@ public class AFKOverlayPlugin extends Plugin {
         boolean isIdle = isPlayerIdle(player);
         if (isIdle) {
             consecutiveIdleTicks++;
-            if (consecutiveIdleTicks >= 2) {
+            if (consecutiveIdleTicks >= 3) {
                 playerInfo.setIdle(true);
             }
         } else {
