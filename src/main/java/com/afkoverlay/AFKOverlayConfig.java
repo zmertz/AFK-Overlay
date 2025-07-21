@@ -2,6 +2,8 @@ package com.afkoverlay;
 
 import net.runelite.client.config.*;
 
+import java.awt.Color;
+
 @ConfigGroup("afkoverlay")
 public interface AFKOverlayConfig extends Config {
 
@@ -46,6 +48,29 @@ public interface AFKOverlayConfig extends Config {
     @Range(min = 0, max = 255)
     default int opacity() {
         return 200;
+    }
+
+    @ConfigItem(
+        keyName = "highlightIdleBackground",
+        name = "Highlight Idle Background",
+        description = "Change the overlay background color when idle.",
+        section = appearanceSection,
+        position = 3
+    )
+    default boolean highlightIdleBackground() {
+        return false;
+    }
+
+    @ConfigItem(
+        keyName = "idleBackgroundColor",
+        name = "Idle Background Color",
+        description = "Background color of the overlay when idle.",
+        section = appearanceSection,
+        position = 4
+    )
+    @Alpha
+    default Color idleBackgroundColor() {
+        return new Color(0xFF020421, true); // Default: #FF020421
     }
 
 

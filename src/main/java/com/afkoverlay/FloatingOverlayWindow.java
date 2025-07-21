@@ -81,7 +81,12 @@ public class FloatingOverlayWindow extends JFrame {
                     0, 0, getWidth(), getHeight(), 12, 12);
                 
                 // Fill background with dark theme and opacity
-                Color backgroundColor = new Color(30, 30, 30, config.opacity());
+                Color backgroundColor;
+                if (config.highlightIdleBackground() && playerInfo.isIdle()) {
+                    backgroundColor = config.idleBackgroundColor();
+                } else {
+                    backgroundColor = new Color(30, 30, 30, config.opacity());
+                }
                 g2d.setColor(backgroundColor);
                 g2d.fill(roundedRectangle);
                 
@@ -506,8 +511,10 @@ public class FloatingOverlayWindow extends JFrame {
              } else {
                  inventoryLabel.setForeground(DARK_TEXT_COLOR); // Green for 50%+ (good amount of items)
              }
-         });
-     }
+             // Repaint background if idle status changed
+            contentPanel.repaint();
+        });
+    }
      
          private void updatePrayerIcon() {
         String activePrayer = playerInfo.getActiveProtectionPrayer();
