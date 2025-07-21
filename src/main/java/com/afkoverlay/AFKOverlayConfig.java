@@ -68,14 +68,14 @@ public interface AFKOverlayConfig extends Config {
     default boolean highlightHpBackground() { return false; }
 
     @ConfigItem(
-        keyName = "lowHpPercentThreshold",
-        name = "Percent threshold",
-        description = "Show highlight when HP is at or below this percent.",
+        keyName = "lowHpThresholdValue",
+        name = "Threshold value",
+        description = "Show highlight when HP is at or below this value.",
         section = hitpointsSection,
         position = 2
     )
-    @Range(min = 1, max = 100)
-    default int lowHpPercentThreshold() { return 10; }
+    @Range(min = 1, max = 99)
+    default int lowHpThresholdValue() { return 10; }
 
     @Alpha
     @ConfigItem(
@@ -105,14 +105,14 @@ public interface AFKOverlayConfig extends Config {
     default boolean highlightPrayerBackground() { return false; }
 
     @ConfigItem(
-        keyName = "lowPrayerPercentThreshold",
-        name = "Percent threshold",
-        description = "Show highlight when prayer is at or below this percent.",
+        keyName = "lowPrayerThresholdValue",
+        name = "Threshold value",
+        description = "Show highlight when prayer is at or below this value.",
         section = prayerSection,
         position = 2
     )
-    @Range(min = 1, max = 100)
-    default int lowPrayerPercentThreshold() { return 10; }
+    @Range(min = 1, max = 99)
+    default int lowPrayerThresholdValue() { return 10; }
 
     @Alpha
     @ConfigItem(
@@ -165,6 +165,57 @@ public interface AFKOverlayConfig extends Config {
     default int idleThresholdMs() {
         return 1200;
     }
+
+    // --- Inventory Section ---
+    @ConfigSection(
+        name = "Inventory",
+        description = "Highlight background based on inventory items.",
+        position = 40
+    )
+    String inventorySection = "inventorySection";
+
+    @ConfigItem(
+        keyName = "highlightInvBackground",
+        name = "Highlight background",
+        description = "Highlight background based on inventory items.",
+        section = inventorySection,
+        position = 1
+    )
+    default boolean highlightInvBackground() { return false; }
+
+    enum InventoryHighlightMode {
+        ABOVE,
+        BELOW
+    }
+
+    @ConfigItem(
+        keyName = "invHighlightMode",
+        name = "Highlight when:",
+        description = "Highlight when inventory items are above or below the threshold.",
+        section = inventorySection,
+        position = 2
+    )
+    default InventoryHighlightMode invHighlightMode() { return InventoryHighlightMode.ABOVE; }
+
+    @ConfigItem(
+        keyName = "invThresholdValue",
+        name = "Threshold value",
+        description = "Number of inventory items to trigger highlight.",
+        section = inventorySection,
+        position = 3
+    )
+    @Range(min = 1, max = 28)
+    default int invThresholdValue() { return 28; }
+
+    @Alpha
+    @ConfigItem(
+        keyName = "invOverlayColor",
+        name = "Threshold color",
+        description = "Background color when inventory highlight is triggered.",
+        section = inventorySection,
+        position = 4
+    )
+    default Color invOverlayColor() { return new Color(0xFF020421); }
 
 
 }

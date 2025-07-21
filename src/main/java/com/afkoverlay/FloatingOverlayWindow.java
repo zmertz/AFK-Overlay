@@ -82,20 +82,30 @@ public class FloatingOverlayWindow extends JFrame {
                 
                 // Fill background with dark theme and opacity
                 Color backgroundColor = new Color(30, 30, 30, config.opacity()); // Default
-                // Priority: HP > Prayer > Status
-                int hpPercent = playerInfo.getHpPercentage();
-                int prayerPercent = playerInfo.getPrayerPercentage();
-                // int invPercent = 0; // No longer needed
-                // try {
-                //     invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
-                // } catch (Exception ignored) {}
+                // Priority: HP > Prayer > Status > Inventory
+                int hpValue = playerInfo.getCurrentHp();
+                int prayerValue = playerInfo.getCurrentPrayer();
+                int invCount = playerInfo.getInventoryUsedSlots();
 
-                if (config.highlightHpBackground() && hpPercent <= config.lowHpPercentThreshold()) {
+                if (config.highlightHpBackground() && hpValue <= config.lowHpThresholdValue()) {
                     backgroundColor = config.lowHpOverlayColor();
-                } else if (config.highlightPrayerBackground() && prayerPercent <= config.lowPrayerPercentThreshold()) {
+                } else if (config.highlightPrayerBackground() && prayerValue <= config.lowPrayerThresholdValue()) {
                     backgroundColor = config.lowPrayerOverlayColor();
                 } else if (config.highlightIdleBackground() && playerInfo.isIdle()) {
                     backgroundColor = config.idleOverlayColor();
+                } else if (config.highlightInvBackground()) {
+                    boolean highlight = false;
+                    switch (config.invHighlightMode()) {
+                        case ABOVE:
+                            highlight = invCount > config.invThresholdValue();
+                            break;
+                        case BELOW:
+                            highlight = invCount < config.invThresholdValue();
+                            break;
+                    }
+                    if (highlight) {
+                        backgroundColor = config.invOverlayColor();
+                    }
                 }
                 g2d.setColor(backgroundColor);
                 g2d.fill(roundedRectangle);
