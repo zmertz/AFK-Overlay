@@ -12,12 +12,11 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ImageUtil;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
 import java.awt.Image;
-import java.io.IOException;
 import java.time.Instant;
 
 @Slf4j
@@ -42,8 +41,6 @@ public class AFKOverlayPlugin extends Plugin {
 
     private FloatingOverlayWindow floatingWindow;
     private PlayerInfo playerInfo;
-    // Track consecutive idle ticks
-    private int consecutiveIdleTicks = 0;
     // Track the last time the player was active
     private Instant lastActive = Instant.now();
 
@@ -52,22 +49,20 @@ public class AFKOverlayPlugin extends Plugin {
         log.info("AFK Overlay plugin started!");
         
         // Initialize player info
-        playerInfo = new PlayerInfo();
-        consecutiveIdleTicks = 0;
-        
+        playerInfo = new PlayerInfo();        
         // Create and show floating overlay window
         SwingUtilities.invokeLater(() -> {
             floatingWindow = new FloatingOverlayWindow(playerInfo, config);
             
             // Set custom icon for the window (using the plugin hub icon)
             try {
-                Image icon = ImageIO.read(getClass().getResourceAsStream("/icon.png"));
+                Image icon = ImageUtil.loadImageResource(getClass(), "/icon.png");
                 if (icon != null) {
                     floatingWindow.setIconImage(icon);
                     // Also try setting it as a list for better compatibility
                     floatingWindow.setIconImages(java.util.Arrays.asList(icon));
                 }
-            } catch (IOException | IllegalArgumentException e) {
+            } catch ( IllegalArgumentException e) {
                 // Silently fall back to default icon
             }
             
@@ -92,7 +87,6 @@ public class AFKOverlayPlugin extends Plugin {
                 floatingWindow = null;
             });
         }
-        consecutiveIdleTicks = 0;
     }
 
     @Subscribe

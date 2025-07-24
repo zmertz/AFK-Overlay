@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.IOException;
+import net.runelite.client.util.ImageUtil;
 
 public class FloatingOverlayWindow extends JFrame {
     private final PlayerInfo playerInfo;
@@ -260,39 +259,39 @@ public class FloatingOverlayWindow extends JFrame {
     private void loadIcons() {
         // Load main icons
         try {
-            hpIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/Hitpoints_icon.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            hpIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/Hitpoints_icon.png");
+        } catch (IllegalArgumentException e) {
             hpIcon = createPlaceholderIcon(16, 16, HP_COLOR);
         }
         
         try {
-            prayerIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/Prayer_icon.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            prayerIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/Prayer_icon.png");
+        } catch (IllegalArgumentException e) {
             prayerIcon = createPlaceholderIcon(16, 16, PRAYER_COLOR);
         }
         
         try {
-            inventoryIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/Inventory.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            inventoryIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/Inventory.png");
+        } catch (IllegalArgumentException e) {
             inventoryIcon = createPlaceholderIcon(16, 16, new Color(150, 150, 150));
         }
         
         // Load protection prayer icons - if they fail, create colored versions
         try {
-            protectMeleeIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/prayers/Protect_from_Melee.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            protectMeleeIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/prayers/Protect_from_Melee.png");
+        } catch (IllegalArgumentException e) {
             protectMeleeIcon = createPlaceholderIcon(16, 16, new Color(255, 100, 100)); // Red for melee
         }
         
         try {
-            protectMagicIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/prayers/Protect_from_Magic.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            protectMagicIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/prayers/Protect_from_Magic.png");
+        } catch (IllegalArgumentException e) {
             protectMagicIcon = createPlaceholderIcon(16, 16, new Color(100, 100, 255)); // Blue for magic
         }
         
         try {
-            protectRangedIcon = ImageIO.read(getClass().getResourceAsStream("/com/icons/prayers/Protect_from_Missiles.png"));
-        } catch (IOException | IllegalArgumentException e) {
+            protectRangedIcon = ImageUtil.loadImageResource(getClass(), "/com/icons/prayers/Protect_from_Missiles.png");
+        } catch (IllegalArgumentException e) {
             protectRangedIcon = createPlaceholderIcon(16, 16, new Color(100, 255, 100)); // Green for ranged
         }
     }
