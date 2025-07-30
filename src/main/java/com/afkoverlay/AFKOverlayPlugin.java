@@ -39,10 +39,15 @@ public class AFKOverlayPlugin extends Plugin {
     @Inject
     private AFKOverlay overlay;
 
+    @Inject
+    private ConfigManager configManager;
+
     private FloatingOverlayWindow floatingWindow;
     private PlayerInfo playerInfo;
     // Track the last time the player was active
     private Instant lastActive = Instant.now();
+    // Track if window was closed by user
+    private boolean windowClosedByUser = false;
 
     @Override
     protected void startUp() throws Exception {
@@ -51,8 +56,15 @@ public class AFKOverlayPlugin extends Plugin {
         // Initialize player info
         playerInfo = new PlayerInfo();        
         // Create and show floating overlay window
+        createAndShowWindow();
+        
+        // Add overlay to overlay manager (for potential future use)
+        overlayManager.add(overlay);
+    }
+
+    private void createAndShowWindow() {
         SwingUtilities.invokeLater(() -> {
-            floatingWindow = new FloatingOverlayWindow(playerInfo, config);
+            floatingWindow = new FloatingOverlayWindow(playerInfo, config, configManager);
             
             // Set custom icon for the window (using the plugin hub icon)
             try {
@@ -66,11 +78,17 @@ public class AFKOverlayPlugin extends Plugin {
                 // Silently fall back to default icon
             }
             
+            // Add window listener to track when it's closed
+            floatingWindow.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    windowClosedByUser = true;
+                }
+            });
+            
             floatingWindow.setVisible(true);
+            windowClosedByUser = false;
         });
-        
-        // Add overlay to overlay manager (for potential future use)
-        overlayManager.add(overlay);
     }
 
     @Override
@@ -80,9 +98,10 @@ public class AFKOverlayPlugin extends Plugin {
         // Remove overlay from overlay manager
         overlayManager.remove(overlay);
         
-        // Dispose of floating window
+        // Save window position and size before disposing
         if (floatingWindow != null) {
             SwingUtilities.invokeLater(() -> {
+                floatingWindow.savePositionAndSize();
                 floatingWindow.dispose();
                 floatingWindow = null;
             });
@@ -109,7 +128,28 @@ public class AFKOverlayPlugin extends Plugin {
     @Subscribe
     public void onConfigChanged(ConfigChanged event) {
         if (event.getGroup().equals("afkoverlay")) {
-            // Update the floating window when config changes
+            // Handle show overlay button
+            if (event.getKey().equals("showOverlay") && config.showOverlay()) {
+                if (floatingWindow == null) {
+                    createAndShowWindow();
+                } else if (!floatingWindow.isVisible()) {
+                    floatingWindow.setVisible(true);
+                }
+                configManager.setConfiguration("afkoverlay", "showOverlay", false);
+            }
+            
+            // Handle display options changes
+            if (event.getKey().startsWith("show") && 
+                (event.getKey().equals("showHp") || 
+                event.getKey().equals("showPrayer") || 
+                event.getKey().equals("showStatus") || 
+                event.getKey().equals("showInventory"))) {
+                if (floatingWindow != null) {
+                    SwingUtilities.invokeLater(() -> floatingWindow.updateConfig());
+                }
+            }
+            
+            // Update the floating window when other config changes
             if (floatingWindow != null) {
                 SwingUtilities.invokeLater(() -> floatingWindow.updateConfig());
             }
@@ -192,8 +232,8 @@ public class AFKOverlayPlugin extends Plugin {
             return false;
         }
 
-        // If the player is interacting with something (combat, etc.), they are active
-        if (player.getInteracting() != null) {
+        // Use isInteracting() method from Actor class for more accurate interaction detection
+        if (player.isInteracting()) {
             return false;
         }
 
