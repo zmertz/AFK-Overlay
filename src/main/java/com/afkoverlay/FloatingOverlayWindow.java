@@ -96,8 +96,6 @@ public class FloatingOverlayWindow extends JFrame {
         validatePosition();
         updateComponentSizes();
         updateDisplay();
-        
-        System.out.println("Final window bounds: " + getBounds());
     }
     
     private void initializeWindow() {
@@ -459,20 +457,16 @@ public class FloatingOverlayWindow extends JFrame {
                     height = Math.max(height, Constants.MIN_HEIGHT);
                     
                     setBounds(x, y, width, height);
-                    System.out.println("Loaded window bounds: x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
                     
                     loadedFromConfig = true;
                 } else {
                     setBounds(x, y, width, height);
-                    System.out.println("Some window bounds missing in config, using defaults");
                 }
             } catch (Exception e) {
                 setBounds(x, y, width, height);
-                System.out.println("Failed to load window bounds, using defaults: " + e.getMessage());
             }
         } else {
             setBounds(x, y, width, height);
-            System.out.println("ConfigManager not available, using default bounds");
         }
         
         return loadedFromConfig;
