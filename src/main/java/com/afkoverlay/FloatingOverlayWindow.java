@@ -168,6 +168,8 @@ public class FloatingOverlayWindow extends JFrame {
                 case BELOW:
                     highlight = invCount < config.invThresholdValue();
                     break;
+                case EQUALS:
+                    highlight = invCount == config.invThresholdValue();
             }
             if (highlight) {
                 backgroundColor = config.invOverlayColor();

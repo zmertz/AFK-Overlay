@@ -127,13 +127,14 @@ default boolean showHp() { return true; }
 
     enum InventoryHighlightMode {
         ABOVE,
-        BELOW
+        BELOW,
+        EQUALS
     }
 
     @ConfigItem(
         keyName = "invHighlightMode",
-        name = "Highlight when:",
-        description = "Highlight when inventory items are above or below the threshold.",
+        name = "Highlight when",
+        description = "Highlight when inventory items are above, below, or equal to the threshold.",
         section = inventorySection,
         position = 3
     )
