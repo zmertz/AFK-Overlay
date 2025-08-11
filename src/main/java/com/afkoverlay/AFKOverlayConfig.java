@@ -107,6 +107,52 @@ default boolean showHp() { return true; }
     )
     String inventorySection = "inventorySection";
 
+    // --- Special Attack Section ---
+    @ConfigSection(
+        name = "Special Attack",
+        description = "Highlight background when special attack is high.",
+        position = 45
+    )
+    String specialAttackSection = "specialAttackSection";
+
+    @ConfigItem(
+        keyName = "showSpecialAttack",
+        name = "Show Special Attack",
+        description = "Display special attack energy in the overlay.",
+        section = specialAttackSection,
+        position = 1
+    )
+    default boolean showSpecialAttack() { return true; }
+
+    @ConfigItem(
+        keyName = "highlightSpecialAttackBackground",
+        name = "Highlight background when high",
+        description = "Highlight background when special attack is high.",
+        section = specialAttackSection,
+        position = 2
+    )
+    default boolean highlightSpecialAttackBackground() { return false; }
+
+    @ConfigItem(
+        keyName = "highSpecialAttackThresholdValue",
+        name = "Threshold value",
+        description = "Show highlight when Special Attack is at or above this value.",
+        section = specialAttackSection,
+        position = 3
+    )
+    @Range(min = 1, max = 100)
+    default int highSpecialAttackThresholdValue() { return 50; }
+
+    @Alpha
+    @ConfigItem(
+        keyName = "highSpecialAttackOverlayColor",
+        name = "Threshold color",
+        description = "Background color when Special Attack is high.",
+        section = specialAttackSection,
+        position = 4
+    )
+    default Color highSpecialAttackOverlayColor() { return new Color(0xFF020421); }
+
     @ConfigItem(
         keyName = "showInventory",
         name = "Show Inventory",
@@ -253,17 +299,35 @@ default boolean showHp() { return true; }
         name = "Reset Position",
         description = "Click to reset the overlay window position to default (100, 100). (Check box on and off)",
         section = windowSection,
-        position = 4
+        position = 6
     )
     default boolean resetPosition() { return false; }
 
-    @ConfigItem(
-        keyName = "showOverlay",
-        name = "Restore Overlay",
-        description = "Click to restore the overlay window if it was closed or hidden. (Check box on and off)",
-        section = windowSection,
-        position = 5
-    )
-    default boolean showOverlay() { return false; }
+@ConfigItem(
+    keyName = "showOverlay",
+    name = "Restore Overlay",
+    description = "Click to restore the overlay window if it was closed or hidden. (Check box on and off)",
+    section = windowSection,
+    position = 7
+)
+default boolean showOverlay() { return false; }
+
+@ConfigItem(
+    keyName = "hideCharacterName",
+    name = "Hide Character Name",
+    description = "Hide the character name in the overlay.",
+    section = windowSection,
+    position = 4
+)
+default boolean hideCharacterName() { return false; }
+
+@ConfigItem(
+    keyName = "hideWindowBorder",
+    name = "Hide Window Border",
+    description = "Hide the window border entirely.",
+    section = windowSection,
+    position = 5
+)
+default boolean hideWindowBorder() { return false; }
 
 }

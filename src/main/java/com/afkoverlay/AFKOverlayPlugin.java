@@ -201,6 +201,10 @@ public class AFKOverlayPlugin extends Plugin {
         // Update inventory usage
         updateInventoryUsage();
 
+        // Update special attack energy
+        int specialAttackEnergy = client.getVarpValue(VarPlayer.SPECIAL_ATTACK_PERCENT) / 10;
+        playerInfo.setSpecialAttackEnergy(specialAttackEnergy);
+
         // Update character name
         updateCharacterName(player);
         
@@ -305,4 +309,4 @@ public class AFKOverlayPlugin extends Plugin {
     AFKOverlayConfig provideConfig(ConfigManager configManager) {
         return configManager.getConfig(AFKOverlayConfig.class);
     }
-} 
+}

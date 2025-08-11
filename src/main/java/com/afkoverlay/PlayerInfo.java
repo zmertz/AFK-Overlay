@@ -9,9 +9,10 @@ public class PlayerInfo {
     private int currentPrayer = 0;
     private int maxPrayer = 0;
     private boolean idle = false;
-    private int inventoryUsedSlots = 0;
-    private String characterName = "";
-    private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
+private int inventoryUsedSlots = 0;
+private int specialAttackEnergy = 0;
+private String characterName = "";
+private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
 
     public int getHpPercentage() {
         if (maxHp == 0) return 0;
@@ -35,11 +36,19 @@ public class PlayerInfo {
         return String.format("%d/%d (%d%%)", currentPrayer, maxPrayer, getPrayerPercentage());
     }
 
-    public String getInventoryText() {
-        int totalSlots = 28;
-        int usagePercentage = (inventoryUsedSlots * 100) / totalSlots;
-        return String.format("%d/28 (%d%%)", inventoryUsedSlots, usagePercentage);
-    }
+public String getInventoryText() {
+    int totalSlots = 28;
+    int usagePercentage = (inventoryUsedSlots * 100) / totalSlots;
+    return String.format("%d/28 (%d%%)", inventoryUsedSlots, usagePercentage);
+}
+
+public int getSpecialAttackEnergyPercentage() {
+    return specialAttackEnergy;
+}
+
+public String getSpecialAttackText() {
+    return String.format("%d%%", specialAttackEnergy);
+}
     
     public String getActiveProtectionPrayer() {
         return activeProtectionPrayer;
@@ -48,4 +57,4 @@ public class PlayerInfo {
     public void setActiveProtectionPrayer(String prayer) {
         this.activeProtectionPrayer = prayer;
     }
-} 
+}
