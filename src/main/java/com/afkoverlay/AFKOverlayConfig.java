@@ -53,6 +53,15 @@ default boolean showHp() { return true; }
     )
     default Color lowHpOverlayColor() { return new Color(0xFF020421); }
 
+    @ConfigItem(
+        keyName = "playHpSound",
+        name = "Play sound",
+        description = "Play a sound when HP is at or below the threshold.",
+        section = hitpointsSection,
+        position = 5
+    )
+    default boolean playHpSound() { return false; }
+
     // --- Prayer Section ---
     @ConfigSection(
         name = "Prayer",
@@ -99,6 +108,15 @@ default boolean showHp() { return true; }
     )
     default Color lowPrayerOverlayColor() { return new Color(0xFF020421); }
 
+    @ConfigItem(
+        keyName = "playPrayerSound",
+        name = "Play sound",
+        description = "Play a sound when prayer is at or below the threshold.",
+        section = prayerSection,
+        position = 5
+    )
+    default boolean playPrayerSound() { return false; }
+
     // --- Inventory Section ---
     @ConfigSection(
         name = "Inventory",
@@ -106,6 +124,61 @@ default boolean showHp() { return true; }
         position = 40
     )
     String inventorySection = "inventorySection";
+
+    // --- Special Attack Section ---
+    @ConfigSection(
+        name = "Special Attack",
+        description = "Highlight background when special attack is high.",
+        position = 45
+    )
+    String specialAttackSection = "specialAttackSection";
+
+    @ConfigItem(
+        keyName = "showSpecialAttack",
+        name = "Show Special Attack",
+        description = "Display special attack energy in the overlay.",
+        section = specialAttackSection,
+        position = 1
+    )
+    default boolean showSpecialAttack() { return true; }
+
+    @ConfigItem(
+        keyName = "highlightSpecialAttackBackground",
+        name = "Highlight background when high",
+        description = "Highlight background when special attack is high.",
+        section = specialAttackSection,
+        position = 2
+    )
+    default boolean highlightSpecialAttackBackground() { return false; }
+
+    @ConfigItem(
+        keyName = "highSpecialAttackThresholdValue",
+        name = "Threshold value",
+        description = "Show highlight when Special Attack is at or above this value.",
+        section = specialAttackSection,
+        position = 3
+    )
+    @Range(min = 1, max = 100)
+    default int highSpecialAttackThresholdValue() { return 50; }
+
+    @Alpha
+    @ConfigItem(
+        keyName = "highSpecialAttackOverlayColor",
+        name = "Threshold color",
+        description = "Background color when Special Attack is high.",
+        section = specialAttackSection,
+        position = 4
+    )
+    default Color highSpecialAttackOverlayColor() { return new Color(0xFF020421); }
+
+    @ConfigItem(
+        keyName = "playSpecialAttackSound",
+        name = "Play sound",
+        description = "Play a sound when Special Attack is at or above the threshold.",
+        section = specialAttackSection,
+        position = 5
+    )
+    default boolean playSpecialAttackSound() { return false; }
 
     @ConfigItem(
         keyName = "showInventory",
@@ -160,6 +233,15 @@ default boolean showHp() { return true; }
     )
     default Color invOverlayColor() { return new Color(0xFF020421); }
 
+    @ConfigItem(
+        keyName = "playInvSound",
+        name = "Play sound",
+        description = "Play a sound when inventory highlight is triggered.",
+        section = inventorySection,
+        position = 6
+    )
+    default boolean playInvSound() { return false; }
+
     // --- Status Section ---
     @ConfigSection(
         name = "Status",
@@ -206,10 +288,19 @@ default boolean showHp() { return true; }
     @Range(min = 500, max = 10000)
     default int idleThresholdMs() { return 1200; }
 
+    @ConfigItem(
+        keyName = "playIdleSound",
+        name = "Play sound when idle",
+        description = "Play a sound when the player is idle.",
+        section = statusSection,
+        position = 5
+    )
+    default boolean playIdleSound() { return false; }
+
     // --- Window Settings Section ---
     @ConfigSection(
-        name = "Window Settings",
-        description = "Configure the overlay window appearance and behavior.",
+        name = "General Settings",
+        description = "Configure general settings.",
         position = 60
     )
     String windowSection = "windowSection";
@@ -248,21 +339,50 @@ default boolean showHp() { return true; }
         return true;
     }
 
+
     @ConfigItem(
-        keyName = "resetPosition",
-        name = "Reset Position",
-        description = "Click to reset the overlay window position to default (100, 100). (Check box on and off)",
+        keyName = "showCharacterName",
+        name = "Show Character Name",
+        description = "Show the character name in the overlay.",
         section = windowSection,
         position = 4
     )
-    default boolean resetPosition() { return false; }
+    default boolean showCharacterName() { return true; }
+
+    @ConfigItem(
+        keyName = "showWindowBorder",
+        name = "Show Window Border",
+        description = "Show the window border.",
+        section = windowSection,
+        position = 5
+    )
+    default boolean showWindowBorder() { return true; }
+
+    @ConfigItem(
+        keyName = "soundVolume",
+        name = "Sound Volume",
+        description = "Volume for the threshold sounds.",
+        section = windowSection,
+        position = 6
+    )
+    @Range(min = 0, max = 100)
+    default int soundVolume() { return 50; }
+
+        @ConfigItem(
+            keyName = "resetPosition",
+            name = "Reset Position",
+            description = "Click to reset the overlay window position to default (100, 100). (Check box on and off)",
+            section = windowSection,
+            position = 7
+        )
+        default boolean resetPosition() { return false; }
 
     @ConfigItem(
         keyName = "showOverlay",
         name = "Restore Overlay",
         description = "Click to restore the overlay window if it was closed or hidden. (Check box on and off)",
         section = windowSection,
-        position = 5
+        position = 8
     )
     default boolean showOverlay() { return false; }
 

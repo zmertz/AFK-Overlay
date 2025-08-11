@@ -7,30 +7,34 @@ A RuneLite plugin that displays your player stats in a floating overlay window t
 ### **Real-time Stats Display**
 - **HP**: Current/Max with percentage and color coding
 - **Prayer**: Current/Max with percentage and color coding  
+- **Special Attack**: Current percentage with color coding
 - **Inventory**: Used slots out of 28 with percentage
 - **Status**: Shows if you're Active or Idle
 - **Character Name**: Displays at the top of the overlay
 
-### **Smart Color Coding**
-- **Green/Normal**: Safe levels (>50% HP/Prayer, <50% Inventory)
-- **Yellow/Warning**: Getting low (11-50% HP/Prayer, 50-89% Inventory)
-- **Red/Danger**: Critical levels (≤10% HP/Prayer, ≥90% Inventory)
-- **Blue**: Prayer shows in soft blue when above 50%
+### **Sound Notifications**
+- Plays a sound every 2 seconds when a stat reaches its configured threshold.
+- Individual toggles for each stat.
+- Adjustable volume.
 
 ### **Interactive Window**
 - **Drag**: Click and hold the top area to move the overlay
 - **Resize**: Drag edges or corners to resize
-- **Click to Focus**: Click anywhere else to bring RuneLite window to front
+- **Click to Focus**: Click to bring RuneLite window to front
 - **Always on Top**: Stays visible over other applications
 
 ## Configuration
 
-Access settings via **RuneLite → Configuration → AFK Overlay**
-
 ### Appearance
 - **Opacity**: Adjust window transparency (0 = fully transparent, 255 = fully opaque)
+- **Show Character Name**: Show the character name in the overlay.
+- **Show Window Border**: Show the window border.
 - **Show Minimize Button**: Display minimize button
 - **Show Close Button**: Display close button
+
+### Sounds
+- **Sound Volume**: Adjust the volume of the sound notifications.
+- **Play sound when threshold reached**: Individual toggles for HP, Prayer, Special Attack, Inventory, and Idle status.
 
 ## Usage
 
@@ -41,4 +45,3 @@ Access settings via **RuneLite → Configuration → AFK Overlay**
 5. **Watch for protection prayers** - the prayer icon changes when you use overhead protection prayers
 
 The overlay automatically updates every game tick, so you'll always see current information without needing to check the main game window.
-

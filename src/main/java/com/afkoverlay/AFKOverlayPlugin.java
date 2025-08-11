@@ -44,10 +44,13 @@ public class AFKOverlayPlugin extends Plugin {
 
     private FloatingOverlayWindow floatingWindow;
     private PlayerInfo playerInfo;
+    private PlayerInfo previousPlayerInfo;
     // Track the last time the player was active
     private Instant lastActive = Instant.now();
     // Track if window was closed by user
     private boolean windowClosedByUser = false;
+    private Instant lastSoundPlayed = Instant.now();
+    private static final int SOUND_ID = 3817;
 
     @Override
     protected void startUp() throws Exception {
@@ -111,6 +114,7 @@ public class AFKOverlayPlugin extends Plugin {
     @Subscribe
     public void onGameTick(GameTick event) {
         updatePlayerInfo();
+        checkThresholdsAndPlaySounds();
     }
 
     @Subscribe
@@ -151,6 +155,7 @@ public class AFKOverlayPlugin extends Plugin {
             
             // Update the floating window when other config changes
             if (floatingWindow != null) {
+                previousPlayerInfo = null;
                 SwingUtilities.invokeLater(() -> floatingWindow.updateConfig());
             }
         }
@@ -201,6 +206,10 @@ public class AFKOverlayPlugin extends Plugin {
         // Update inventory usage
         updateInventoryUsage();
 
+        // Update special attack energy
+        int specialAttackEnergy = client.getVarpValue(VarPlayer.SPECIAL_ATTACK_PERCENT) / 10;
+        playerInfo.setSpecialAttackEnergy(specialAttackEnergy);
+
         // Update character name
         updateCharacterName(player);
         
@@ -208,7 +217,8 @@ public class AFKOverlayPlugin extends Plugin {
         updateProtectionPrayer(player);
 
         // Update the floating window
-        if (floatingWindow != null) {
+        if (floatingWindow != null && (previousPlayerInfo == null || !previousPlayerInfo.equals(playerInfo))) {
+            previousPlayerInfo = new PlayerInfo(playerInfo);
             SwingUtilities.invokeLater(() -> {
                 floatingWindow.updateDisplay();
                 floatingWindow.updateCharacterName(playerInfo.getCharacterName());
@@ -305,4 +315,66 @@ public class AFKOverlayPlugin extends Plugin {
     AFKOverlayConfig provideConfig(ConfigManager configManager) {
         return configManager.getConfig(AFKOverlayConfig.class);
     }
-} 
+
+    private void checkThresholdsAndPlaySounds() {
+        if (client.getGameState() != GameState.LOGGED_IN) {
+            return;
+        }
+
+        Instant now = Instant.now();
+        if (java.time.Duration.between(lastSoundPlayed, now).toMillis() < 2000) {
+            return;
+        }
+
+        boolean playSound = false;
+
+        // Check HP
+        if (config.playHpSound() && playerInfo.getCurrentHp() > 0 && playerInfo.getCurrentHp() <= config.lowHpThresholdValue()) {
+            playSound = true;
+        }
+
+        // Check Prayer
+        if (config.playPrayerSound() && playerInfo.getCurrentPrayer() > 0 && playerInfo.getCurrentPrayer() <= config.lowPrayerThresholdValue()) {
+            playSound = true;
+        }
+
+        // Check Special Attack
+        if (config.playSpecialAttackSound() && playerInfo.getSpecialAttackEnergyPercentage() >= config.highSpecialAttackThresholdValue()) {
+            playSound = true;
+        }
+
+        // Check Inventory
+        if (config.playInvSound()) {
+            int invCount = playerInfo.getInventoryUsedSlots();
+            boolean invThresholdMet = false;
+            switch (config.invHighlightMode()) {
+                case ABOVE:
+                    if (invCount > config.invThresholdValue()) invThresholdMet = true;
+                    break;
+                case BELOW:
+                    if (invCount < config.invThresholdValue()) invThresholdMet = true;
+                    break;
+                case EQUALS:
+                    if (invCount == config.invThresholdValue()) invThresholdMet = true;
+                    break;
+            }
+            if (invThresholdMet) {
+                playSound = true;
+            }
+        }
+
+        // Check Idle Status
+        if (config.playIdleSound() && playerInfo.isIdle()) {
+            playSound = true;
+        }
+
+        if (playSound) {
+            lastSoundPlayed = now;
+            Preferences preferences = client.getPreferences();
+            int previousVolume = preferences.getSoundEffectVolume();
+            preferences.setSoundEffectVolume(config.soundVolume());
+            client.playSoundEffect(SOUND_ID, config.soundVolume());
+            preferences.setSoundEffectVolume(previousVolume);
+        }
+    }
+}

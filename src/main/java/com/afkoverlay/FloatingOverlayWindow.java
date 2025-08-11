@@ -58,6 +58,7 @@ public class FloatingOverlayWindow extends JFrame {
     private JLabel prayerLabel;
     private JLabel statusLabel;
     private JLabel inventoryLabel;
+    private JLabel specialAttackLabel;
     private JPanel titleBar;
     private JLabel characterNameLabel;
     private Window runeliteWindow;
@@ -66,6 +67,7 @@ public class FloatingOverlayWindow extends JFrame {
     private BufferedImage hpIcon;
     private BufferedImage prayerIcon;
     private BufferedImage inventoryIcon;
+    private BufferedImage specialAttackIcon;
     private BufferedImage protectMeleeIcon;
     private BufferedImage protectMagicIcon;
     private BufferedImage protectRangedIcon;
@@ -131,9 +133,11 @@ public class FloatingOverlayWindow extends JFrame {
                 g2d.fill(roundedRectangle);
                 
                 // Draw border
-                g2d.setColor(Constants.DARK_BORDER_COLOR);
-                g2d.setStroke(new BasicStroke(1.5f));
-                g2d.draw(roundedRectangle);
+                if (config.showWindowBorder()) {
+                    g2d.setColor(Constants.DARK_BORDER_COLOR);
+                    g2d.setStroke(new BasicStroke(1.5f));
+                    g2d.draw(roundedRectangle);
+                }
                 
                 g2d.dispose();
             }
@@ -159,6 +163,8 @@ public class FloatingOverlayWindow extends JFrame {
             backgroundColor = config.lowPrayerOverlayColor();
         } else if (config.highlightIdleBackground() && playerInfo.isIdle()) {
             backgroundColor = config.idleOverlayColor();
+        } else if (config.highlightSpecialAttackBackground() && playerInfo.getSpecialAttackEnergyPercentage() >= config.highSpecialAttackThresholdValue()) {
+            backgroundColor = config.highSpecialAttackOverlayColor();
         } else if (config.highlightInvBackground()) {
             boolean highlight = false;
             switch (config.invHighlightMode()) {
@@ -184,6 +190,7 @@ public class FloatingOverlayWindow extends JFrame {
         prayerLabel = createLabel("", prayerIcon);
         statusLabel = createLabel("Status: ACTIVE", null);
         inventoryLabel = createLabel("", inventoryIcon);
+        specialAttackLabel = createLabel("", specialAttackIcon);
     }
     
     private void setupLayout() {
@@ -196,6 +203,7 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showHp(), hpLabel);
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
+        addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
@@ -227,7 +235,9 @@ public class FloatingOverlayWindow extends JFrame {
         characterNameLabel.setBorder(BorderFactory.createEmptyBorder(0, Constants.PADDING, 0, 0));
         
         // Add character name on the left
-        titleBar.add(characterNameLabel, BorderLayout.WEST);
+        if (config.showCharacterName()) {
+            titleBar.add(characterNameLabel, BorderLayout.WEST);
+        }
         
         // Add buttons on the right
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, Constants.BUTTON_SPACING, 0));
@@ -560,6 +570,7 @@ public class FloatingOverlayWindow extends JFrame {
         prayerLabel.setVisible(config.showPrayer());
         statusLabel.setVisible(config.showStatus());
         inventoryLabel.setVisible(config.showInventory());
+        specialAttackLabel.setVisible(config.showSpecialAttack());
         
         // Rebuild info panel
         rebuildInfoPanel();
@@ -582,6 +593,7 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showHp(), hpLabel);
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
+        addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
@@ -592,6 +604,7 @@ public class FloatingOverlayWindow extends JFrame {
         prayerLabel.setForeground(Constants.DARK_TEXT_COLOR);
         statusLabel.setForeground(Constants.DARK_TEXT_COLOR);
         inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
         characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
     }
     
@@ -609,9 +622,11 @@ public class FloatingOverlayWindow extends JFrame {
     }
     
     public void updateCharacterName(String name) {
-        SwingUtilities.invokeLater(() -> {
-            characterNameLabel.setText(name != null ? name : "");
-        });
+        if (characterNameLabel != null) {
+            SwingUtilities.invokeLater(() -> {
+                characterNameLabel.setText(name != null ? name : "");
+            });
+        }
     }
     
     private Window findRuneLiteWindow() {
@@ -674,11 +689,12 @@ public class FloatingOverlayWindow extends JFrame {
         }
     }
     
-    private void loadIcons() {
-        // Load main icons
-        hpIcon = loadIcon("/com/icons/Hitpoints_icon.png", Constants.HP_COLOR);
-        prayerIcon = loadIcon("/com/icons/Prayer_icon.png", Constants.PRAYER_COLOR);
-        inventoryIcon = loadIcon("/com/icons/Inventory.png", new Color(150, 150, 150));
+private void loadIcons() {
+    // Load main icons
+    hpIcon = loadIcon("/com/icons/Hitpoints_icon.png", Constants.HP_COLOR);
+    prayerIcon = loadIcon("/com/icons/Prayer_icon.png", Constants.PRAYER_COLOR);
+    inventoryIcon = loadIcon("/com/icons/Inventory.png", new Color(150, 150, 150));
+    specialAttackIcon = loadIcon("/com/icons/Special_attack_orb.png", new Color(150, 150, 150));
         
         // Load protection prayer icons
         protectMeleeIcon = loadIcon("/com/icons/prayers/Protect_from_Melee.png", new Color(255, 100, 100));
@@ -706,10 +722,11 @@ public class FloatingOverlayWindow extends JFrame {
     public void updateDisplay() {
         SwingUtilities.invokeLater(() -> {
             updateHpDisplay();
-            updatePrayerDisplay();
-            updateStatusDisplay();
-            updateInventoryDisplay();
-            contentPanel.repaint();
+    updatePrayerDisplay();
+    updateStatusDisplay();
+    updateInventoryDisplay();
+    updateSpecialAttackDisplay();
+    contentPanel.repaint();
         });
     }
     
@@ -755,6 +772,14 @@ public class FloatingOverlayWindow extends JFrame {
             inventoryLabel.setText(playerInfo.getInventoryText());
             int invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
             inventoryLabel.setForeground(getColorForPercentage(invPercent, Constants.DARK_TEXT_COLOR));
+        }
+    }
+
+    private void updateSpecialAttackDisplay() {
+        if (config.showSpecialAttack()) {
+            specialAttackLabel.setText(playerInfo.getSpecialAttackText());
+            int specPercent = playerInfo.getSpecialAttackEnergyPercentage();
+            specialAttackLabel.setForeground(getColorForPercentage(specPercent, Constants.DARK_TEXT_COLOR));
         }
     }
     
@@ -822,6 +847,7 @@ public class FloatingOverlayWindow extends JFrame {
         updateLabelSize(config.showPrayer(), prayerLabel, newFont, null, iconSize); // Icon updated separately
         updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
         updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
+        updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
         
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
@@ -873,6 +899,7 @@ public class FloatingOverlayWindow extends JFrame {
         if (config.showHp()) componentCount++;
         if (config.showPrayer()) componentCount++;
         if (config.showInventory()) componentCount++;
+        if (config.showSpecialAttack()) componentCount++;
         if (config.showStatus()) componentCount++;
         
         // Each component needs space for itself plus spacing
