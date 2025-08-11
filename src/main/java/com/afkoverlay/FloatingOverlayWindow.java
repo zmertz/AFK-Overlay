@@ -132,12 +132,12 @@ public class FloatingOverlayWindow extends JFrame {
                 g2d.setColor(getBackgroundColor());
                 g2d.fill(roundedRectangle);
                 
-        // Draw border
-        if (!config.hideWindowBorder()) {
-            g2d.setColor(Constants.DARK_BORDER_COLOR);
-            g2d.setStroke(new BasicStroke(1.5f));
-            g2d.draw(roundedRectangle);
-        }
+                // Draw border
+                if (config.showWindowBorder()) {
+                    g2d.setColor(Constants.DARK_BORDER_COLOR);
+                    g2d.setStroke(new BasicStroke(1.5f));
+                    g2d.draw(roundedRectangle);
+                }
                 
                 g2d.dispose();
             }
@@ -235,7 +235,7 @@ public class FloatingOverlayWindow extends JFrame {
         characterNameLabel.setBorder(BorderFactory.createEmptyBorder(0, Constants.PADDING, 0, 0));
         
         // Add character name on the left
-        if (!config.hideCharacterName()) {
+        if (config.showCharacterName()) {
             titleBar.add(characterNameLabel, BorderLayout.WEST);
         }
         

@@ -4,15 +4,30 @@ import lombok.Data;
 
 @Data
 public class PlayerInfo {
+    public PlayerInfo() {
+    }
+
+    public PlayerInfo(PlayerInfo other) {
+        this.currentHp = other.currentHp;
+        this.maxHp = other.maxHp;
+        this.currentPrayer = other.currentPrayer;
+        this.maxPrayer = other.maxPrayer;
+        this.idle = other.idle;
+        this.inventoryUsedSlots = other.inventoryUsedSlots;
+        this.specialAttackEnergy = other.specialAttackEnergy;
+        this.characterName = other.characterName;
+        this.activeProtectionPrayer = other.activeProtectionPrayer;
+    }
+
     private int currentHp = 0;
     private int maxHp = 0;
     private int currentPrayer = 0;
     private int maxPrayer = 0;
     private boolean idle = false;
-private int inventoryUsedSlots = 0;
-private int specialAttackEnergy = 0;
-private String characterName = "";
-private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
+    private int inventoryUsedSlots = 0;
+    private int specialAttackEnergy = 0;
+    private String characterName = "";
+    private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
 
     public int getHpPercentage() {
         if (maxHp == 0) return 0;

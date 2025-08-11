@@ -44,6 +44,7 @@ public class AFKOverlayPlugin extends Plugin {
 
     private FloatingOverlayWindow floatingWindow;
     private PlayerInfo playerInfo;
+    private PlayerInfo previousPlayerInfo;
     // Track the last time the player was active
     private Instant lastActive = Instant.now();
     // Track if window was closed by user
@@ -154,6 +155,7 @@ public class AFKOverlayPlugin extends Plugin {
             
             // Update the floating window when other config changes
             if (floatingWindow != null) {
+                previousPlayerInfo = null;
                 SwingUtilities.invokeLater(() -> floatingWindow.updateConfig());
             }
         }
@@ -215,7 +217,8 @@ public class AFKOverlayPlugin extends Plugin {
         updateProtectionPrayer(player);
 
         // Update the floating window
-        if (floatingWindow != null) {
+        if (floatingWindow != null && (previousPlayerInfo == null || !previousPlayerInfo.equals(playerInfo))) {
+            previousPlayerInfo = new PlayerInfo(playerInfo);
             SwingUtilities.invokeLater(() -> {
                 floatingWindow.updateDisplay();
                 floatingWindow.updateCharacterName(playerInfo.getCharacterName());

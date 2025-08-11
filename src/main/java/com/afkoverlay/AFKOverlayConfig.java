@@ -341,22 +341,22 @@ default boolean showHp() { return true; }
 
 
     @ConfigItem(
-        keyName = "hideCharacterName",
-        name = "Hide Character Name",
-        description = "Hide the character name in the overlay.",
+        keyName = "showCharacterName",
+        name = "Show Character Name",
+        description = "Show the character name in the overlay.",
         section = windowSection,
         position = 4
     )
-    default boolean hideCharacterName() { return false; }
+    default boolean showCharacterName() { return true; }
 
     @ConfigItem(
-        keyName = "hideWindowBorder",
-        name = "Hide Window Border",
-        description = "Hide the window border entirely.",
+        keyName = "showWindowBorder",
+        name = "Show Window Border",
+        description = "Show the window border.",
         section = windowSection,
         position = 5
     )
-    default boolean hideWindowBorder() { return false; }
+    default boolean showWindowBorder() { return true; }
 
     @ConfigItem(
         keyName = "soundVolume",
