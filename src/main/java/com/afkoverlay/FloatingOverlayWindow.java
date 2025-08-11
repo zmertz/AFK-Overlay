@@ -55,20 +55,20 @@ public class FloatingOverlayWindow extends JFrame {
     private JPanel contentPanel;
     private JPanel infoPanel;
     private JLabel hpLabel;
-private JLabel prayerLabel;
-private JLabel statusLabel;
-private JLabel inventoryLabel;
-private JLabel specialAttackLabel;
-private JPanel titleBar;
+    private JLabel prayerLabel;
+    private JLabel statusLabel;
+    private JLabel inventoryLabel;
+    private JLabel specialAttackLabel;
+    private JPanel titleBar;
     private JLabel characterNameLabel;
     private Window runeliteWindow;
     
     // Icons
     private BufferedImage hpIcon;
-private BufferedImage prayerIcon;
-private BufferedImage inventoryIcon;
-private BufferedImage specialAttackIcon;
-private BufferedImage protectMeleeIcon;
+    private BufferedImage prayerIcon;
+    private BufferedImage inventoryIcon;
+    private BufferedImage specialAttackIcon;
+    private BufferedImage protectMeleeIcon;
     private BufferedImage protectMagicIcon;
     private BufferedImage protectRangedIcon;
     
@@ -132,12 +132,12 @@ private BufferedImage protectMeleeIcon;
                 g2d.setColor(getBackgroundColor());
                 g2d.fill(roundedRectangle);
                 
-// Draw border
-if (!config.hideWindowBorder()) {
-    g2d.setColor(Constants.DARK_BORDER_COLOR);
-    g2d.setStroke(new BasicStroke(1.5f));
-    g2d.draw(roundedRectangle);
-}
+        // Draw border
+        if (!config.hideWindowBorder()) {
+            g2d.setColor(Constants.DARK_BORDER_COLOR);
+            g2d.setStroke(new BasicStroke(1.5f));
+            g2d.draw(roundedRectangle);
+        }
                 
                 g2d.dispose();
             }
@@ -157,15 +157,15 @@ if (!config.hideWindowBorder()) {
         int prayerValue = playerInfo.getCurrentPrayer();
         int invCount = playerInfo.getInventoryUsedSlots();
         
-if (config.highlightHpBackground() && hpValue <= config.lowHpThresholdValue()) {
-    backgroundColor = config.lowHpOverlayColor();
-} else if (config.highlightPrayerBackground() && prayerValue <= config.lowPrayerThresholdValue()) {
-    backgroundColor = config.lowPrayerOverlayColor();
-} else if (config.highlightSpecialAttackBackground() && playerInfo.getSpecialAttackEnergyPercentage() >= config.highSpecialAttackThresholdValue()) {
-    backgroundColor = config.highSpecialAttackOverlayColor();
-} else if (config.highlightIdleBackground() && playerInfo.isIdle()) {
-    backgroundColor = config.idleOverlayColor();
-} else if (config.highlightInvBackground()) {
+        if (config.highlightHpBackground() && hpValue <= config.lowHpThresholdValue()) {
+            backgroundColor = config.lowHpOverlayColor();
+        } else if (config.highlightPrayerBackground() && prayerValue <= config.lowPrayerThresholdValue()) {
+            backgroundColor = config.lowPrayerOverlayColor();
+        } else if (config.highlightIdleBackground() && playerInfo.isIdle()) {
+            backgroundColor = config.idleOverlayColor();
+        } else if (config.highlightSpecialAttackBackground() && playerInfo.getSpecialAttackEnergyPercentage() >= config.highSpecialAttackThresholdValue()) {
+            backgroundColor = config.highSpecialAttackOverlayColor();
+        } else if (config.highlightInvBackground()) {
             boolean highlight = false;
             switch (config.invHighlightMode()) {
                 case ABOVE:
@@ -185,13 +185,13 @@ if (config.highlightHpBackground() && hpValue <= config.lowHpThresholdValue()) {
         return backgroundColor;
     }
     
-private void setupLabels() {
-    hpLabel = createLabel("", hpIcon);
-    prayerLabel = createLabel("", prayerIcon);
-    statusLabel = createLabel("Status: ACTIVE", null);
-    inventoryLabel = createLabel("", inventoryIcon);
-    specialAttackLabel = createLabel("", specialAttackIcon);
-}
+    private void setupLabels() {
+        hpLabel = createLabel("", hpIcon);
+        prayerLabel = createLabel("", prayerIcon);
+        statusLabel = createLabel("Status: ACTIVE", null);
+        inventoryLabel = createLabel("", inventoryIcon);
+        specialAttackLabel = createLabel("", specialAttackIcon);
+    }
     
     private void setupLayout() {
         // Create info panel
@@ -199,12 +199,12 @@ private void setupLabels() {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setOpaque(false);
         
-// Conditionally add components based on config
-addComponentIfVisible(config.showHp(), hpLabel);
-addComponentIfVisible(config.showPrayer(), prayerLabel);
-addComponentIfVisible(config.showInventory(), inventoryLabel);
-addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
-addComponentIfVisible(config.showStatus(), statusLabel);
+        // Conditionally add components based on config
+        addComponentIfVisible(config.showHp(), hpLabel);
+        addComponentIfVisible(config.showPrayer(), prayerLabel);
+        addComponentIfVisible(config.showInventory(), inventoryLabel);
+        addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
         
@@ -234,10 +234,10 @@ addComponentIfVisible(config.showStatus(), statusLabel);
         characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
         characterNameLabel.setBorder(BorderFactory.createEmptyBorder(0, Constants.PADDING, 0, 0));
         
-// Add character name on the left
-if (!config.hideCharacterName()) {
-    titleBar.add(characterNameLabel, BorderLayout.WEST);
-}
+        // Add character name on the left
+        if (!config.hideCharacterName()) {
+            titleBar.add(characterNameLabel, BorderLayout.WEST);
+        }
         
         // Add buttons on the right
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, Constants.BUTTON_SPACING, 0));
@@ -565,12 +565,12 @@ if (!config.hideCharacterName()) {
         titleBar = createTitleBar();
         contentPanel.add(titleBar, BorderLayout.NORTH);
         
-// Update component visibility
-hpLabel.setVisible(config.showHp());
-prayerLabel.setVisible(config.showPrayer());
-statusLabel.setVisible(config.showStatus());
-inventoryLabel.setVisible(config.showInventory());
-specialAttackLabel.setVisible(config.showSpecialAttack());
+        // Update component visibility
+        hpLabel.setVisible(config.showHp());
+        prayerLabel.setVisible(config.showPrayer());
+        statusLabel.setVisible(config.showStatus());
+        inventoryLabel.setVisible(config.showInventory());
+        specialAttackLabel.setVisible(config.showSpecialAttack());
         
         // Rebuild info panel
         rebuildInfoPanel();
@@ -589,23 +589,23 @@ specialAttackLabel.setVisible(config.showSpecialAttack());
         contentPanel.remove(infoPanel);
         infoPanel.removeAll();
         
-// Re-add components conditionally
-addComponentIfVisible(config.showHp(), hpLabel);
-addComponentIfVisible(config.showPrayer(), prayerLabel);
-addComponentIfVisible(config.showInventory(), inventoryLabel);
-addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
-addComponentIfVisible(config.showStatus(), statusLabel);
+        // Re-add components conditionally
+        addComponentIfVisible(config.showHp(), hpLabel);
+        addComponentIfVisible(config.showPrayer(), prayerLabel);
+        addComponentIfVisible(config.showInventory(), inventoryLabel);
+        addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
     }
     
     private void updateLabelColors() {
         hpLabel.setForeground(Constants.DARK_TEXT_COLOR);
-prayerLabel.setForeground(Constants.DARK_TEXT_COLOR);
-statusLabel.setForeground(Constants.DARK_TEXT_COLOR);
-inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
-specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
-characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        prayerLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        statusLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
     }
     
     private void ensureMinimumDimensions() {
@@ -621,13 +621,13 @@ characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
         }
     }
     
-public void updateCharacterName(String name) {
-    if (characterNameLabel != null) {
-        SwingUtilities.invokeLater(() -> {
-            characterNameLabel.setText(name != null ? name : "");
-        });
+    public void updateCharacterName(String name) {
+        if (characterNameLabel != null) {
+            SwingUtilities.invokeLater(() -> {
+                characterNameLabel.setText(name != null ? name : "");
+            });
+        }
     }
-}
     
     private Window findRuneLiteWindow() {
         try {
@@ -722,11 +722,11 @@ private void loadIcons() {
     public void updateDisplay() {
         SwingUtilities.invokeLater(() -> {
             updateHpDisplay();
-updatePrayerDisplay();
-updateStatusDisplay();
-updateInventoryDisplay();
-updateSpecialAttackDisplay();
-contentPanel.repaint();
+    updatePrayerDisplay();
+    updateStatusDisplay();
+    updateInventoryDisplay();
+    updateSpecialAttackDisplay();
+    contentPanel.repaint();
         });
     }
     
@@ -767,21 +767,21 @@ contentPanel.repaint();
         }
     }
     
-private void updateInventoryDisplay() {
-    if (config.showInventory()) {
-        inventoryLabel.setText(playerInfo.getInventoryText());
-        int invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
-        inventoryLabel.setForeground(getColorForPercentage(invPercent, Constants.DARK_TEXT_COLOR));
+    private void updateInventoryDisplay() {
+        if (config.showInventory()) {
+            inventoryLabel.setText(playerInfo.getInventoryText());
+            int invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
+            inventoryLabel.setForeground(getColorForPercentage(invPercent, Constants.DARK_TEXT_COLOR));
+        }
     }
-}
 
-private void updateSpecialAttackDisplay() {
-    if (config.showSpecialAttack()) {
-        specialAttackLabel.setText(playerInfo.getSpecialAttackText());
-        int specPercent = playerInfo.getSpecialAttackEnergyPercentage();
-        specialAttackLabel.setForeground(getColorForPercentage(specPercent, Constants.DARK_TEXT_COLOR));
+    private void updateSpecialAttackDisplay() {
+        if (config.showSpecialAttack()) {
+            specialAttackLabel.setText(playerInfo.getSpecialAttackText());
+            int specPercent = playerInfo.getSpecialAttackEnergyPercentage();
+            specialAttackLabel.setForeground(getColorForPercentage(specPercent, Constants.DARK_TEXT_COLOR));
+        }
     }
-}
     
     private Color getColorForPercentage(int percentage, Color defaultColor) {
         if (percentage <= 10) {
@@ -844,10 +844,10 @@ private void updateSpecialAttackDisplay() {
         
         // Update each label's font and icon (if visible)
         updateLabelSize(config.showHp(), hpLabel, newFont, hpIcon, iconSize);
-updateLabelSize(config.showPrayer(), prayerLabel, newFont, null, iconSize); // Icon updated separately
-updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
-updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
-updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
+        updateLabelSize(config.showPrayer(), prayerLabel, newFont, null, iconSize); // Icon updated separately
+        updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
+        updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
+        updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
         
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
@@ -896,11 +896,11 @@ updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, special
         
         // Add the height of each visible component
         int componentCount = 0;
-if (config.showHp()) componentCount++;
-if (config.showPrayer()) componentCount++;
-if (config.showInventory()) componentCount++;
-if (config.showSpecialAttack()) componentCount++;
-if (config.showStatus()) componentCount++;
+        if (config.showHp()) componentCount++;
+        if (config.showPrayer()) componentCount++;
+        if (config.showInventory()) componentCount++;
+        if (config.showSpecialAttack()) componentCount++;
+        if (config.showStatus()) componentCount++;
         
         // Each component needs space for itself plus spacing
         Font minFont = new Font("Arial", Font.BOLD, Constants.MIN_FONT_SIZE);
