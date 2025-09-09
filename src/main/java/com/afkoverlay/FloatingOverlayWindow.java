@@ -59,6 +59,7 @@ public class FloatingOverlayWindow extends JFrame {
     private JLabel statusLabel;
     private JLabel inventoryLabel;
     private JLabel specialAttackLabel;
+    private JLabel randomEventLabel;
     private JPanel titleBar;
     private JLabel characterNameLabel;
     private Window runeliteWindow;
@@ -191,6 +192,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel = createLabel("Status: ACTIVE", null);
         inventoryLabel = createLabel("", inventoryIcon);
         specialAttackLabel = createLabel("", specialAttackIcon);
+        randomEventLabel = createLabel("", null);
     }
     
     private void setupLayout() {
@@ -205,6 +207,7 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
+        addComponentIfVisible(config.showRandomEvents(), randomEventLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
         
@@ -571,6 +574,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel.setVisible(config.showStatus());
         inventoryLabel.setVisible(config.showInventory());
         specialAttackLabel.setVisible(config.showSpecialAttack());
+        randomEventLabel.setVisible(config.showRandomEvents());
         
         // Rebuild info panel
         rebuildInfoPanel();
@@ -595,7 +599,8 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
-        
+        addComponentIfVisible(config.showRandomEvents(), randomEventLabel);
+
         contentPanel.add(infoPanel, BorderLayout.CENTER);
     }
     
@@ -606,6 +611,7 @@ public class FloatingOverlayWindow extends JFrame {
         inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
         specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
         characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        randomEventLabel.setForeground(Constants.DARK_TEXT_COLOR);
     }
     
     private void ensureMinimumDimensions() {
@@ -722,11 +728,12 @@ private void loadIcons() {
     public void updateDisplay() {
         SwingUtilities.invokeLater(() -> {
             updateHpDisplay();
-    updatePrayerDisplay();
-    updateStatusDisplay();
-    updateInventoryDisplay();
-    updateSpecialAttackDisplay();
-    contentPanel.repaint();
+            updatePrayerDisplay();
+            updateStatusDisplay();
+            updateInventoryDisplay();
+            updateSpecialAttackDisplay();
+            updateRandomEventDisplay();
+            contentPanel.repaint();
         });
     }
     
@@ -780,6 +787,18 @@ private void loadIcons() {
             specialAttackLabel.setText(playerInfo.getSpecialAttackText());
             int specPercent = playerInfo.getSpecialAttackEnergyPercentage();
             specialAttackLabel.setForeground(getColorForPercentage(specPercent, Constants.DARK_TEXT_COLOR));
+        }
+    }
+
+    private void updateRandomEventDisplay() {
+        if (config.showRandomEvents()) {
+            if (playerInfo.getCurrentRandomEvent() != null) {
+                randomEventLabel.setText("Event: " + playerInfo.getCurrentRandomEvent());
+                randomEventLabel.setForeground(Constants.ACTIVE_COLOR);
+            } else {
+                randomEventLabel.setText("Event: None");
+                randomEventLabel.setForeground(Constants.IDLE_COLOR);
+            }
         }
     }
     
@@ -848,7 +867,8 @@ private void loadIcons() {
         updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
         updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
         updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
-        
+        updateLabelSize(config.showRandomEvents(), randomEventLabel, newFont, null, iconSize);
+
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
         

@@ -297,11 +297,28 @@ default boolean showHp() { return true; }
     )
     default boolean playIdleSound() { return false; }
 
+    // --- Random Events Settings Section ---
+    @ConfigSection(
+        name = "Random Events",
+        description = "Display current random events.",
+        position = 60
+    )
+    String randomEventSection = "randomEventSection";
+
+    @ConfigItem(
+        keyName = "showRandomEvents",
+        name = "Show Random Events",
+        description = "Display current random event in the overlay.",
+        section = randomEventSection,
+        position = 1
+    )
+    default boolean showRandomEvents() { return true; }
+
     // --- Window Settings Section ---
     @ConfigSection(
         name = "General Settings",
         description = "Configure general settings.",
-        position = 60
+        position = 70
     )
     String windowSection = "windowSection";
 
