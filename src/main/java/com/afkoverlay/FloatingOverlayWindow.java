@@ -59,6 +59,7 @@ public class FloatingOverlayWindow extends JFrame {
     private JLabel statusLabel;
     private JLabel inventoryLabel;
     private JLabel specialAttackLabel;
+    private JLabel enemyHealthLabel;
     private JPanel titleBar;
     private JLabel characterNameLabel;
     private Window runeliteWindow;
@@ -191,6 +192,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel = createLabel("Status: ACTIVE", null);
         inventoryLabel = createLabel("", inventoryIcon);
         specialAttackLabel = createLabel("", specialAttackIcon);
+        enemyHealthLabel = createLabel("", null);
     }
     
     private void setupLayout() {
@@ -204,10 +206,11 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showEnemyHealth(), enemyHealthLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
-        
+
         contentPanel.add(infoPanel, BorderLayout.CENTER);
-        
+
         // Create title bar
         titleBar = createTitleBar();
         contentPanel.add(titleBar, BorderLayout.NORTH);
@@ -571,7 +574,8 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel.setVisible(config.showStatus());
         inventoryLabel.setVisible(config.showInventory());
         specialAttackLabel.setVisible(config.showSpecialAttack());
-        
+        enemyHealthLabel.setVisible(config.showEnemyHealth());
+
         // Rebuild info panel
         rebuildInfoPanel();
         
@@ -594,8 +598,9 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showEnemyHealth(), enemyHealthLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
-        
+
         contentPanel.add(infoPanel, BorderLayout.CENTER);
     }
     
@@ -605,6 +610,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel.setForeground(Constants.DARK_TEXT_COLOR);
         inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
         specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        enemyHealthLabel.setForeground(Constants.DARK_TEXT_COLOR);
         characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
     }
     
@@ -726,6 +732,7 @@ private void loadIcons() {
     updateStatusDisplay();
     updateInventoryDisplay();
     updateSpecialAttackDisplay();
+    updateEnemyHealthDisplay();
     contentPanel.repaint();
         });
     }
@@ -772,6 +779,26 @@ private void loadIcons() {
             inventoryLabel.setText(playerInfo.getInventoryText());
             int invPercent = (playerInfo.getInventoryUsedSlots() * 100) / 28;
             inventoryLabel.setForeground(getColorForPercentage(invPercent, Constants.DARK_TEXT_COLOR));
+        }
+    }
+
+    private void updateEnemyHealthDisplay() {
+        if (config.showEnemyHealth()) {
+            if (playerInfo.hasEnemyTarget()) {
+                enemyHealthLabel.setText(playerInfo.getEnemyHealthText());
+                int hp = playerInfo.getEnemyHealthPercent();
+                if (hp <= 10) {
+                    enemyHealthLabel.setForeground(Constants.DANGER_COLOR);
+                } else if (hp <= 50) {
+                    enemyHealthLabel.setForeground(Constants.WARNING_COLOR);
+                } else {
+                    enemyHealthLabel.setForeground(Constants.HP_COLOR);
+                }
+                enemyHealthLabel.setVisible(true);
+            } else {
+                enemyHealthLabel.setText("");
+                enemyHealthLabel.setVisible(false);
+            }
         }
     }
 
@@ -848,7 +875,8 @@ private void loadIcons() {
         updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
         updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
         updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
-        
+        updateLabelSize(config.showEnemyHealth(), enemyHealthLabel, newFont, null, iconSize);
+
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
         
@@ -900,6 +928,7 @@ private void loadIcons() {
         if (config.showPrayer()) componentCount++;
         if (config.showInventory()) componentCount++;
         if (config.showSpecialAttack()) componentCount++;
+        if (config.showEnemyHealth()) componentCount++;
         if (config.showStatus()) componentCount++;
         
         // Each component needs space for itself plus spacing
