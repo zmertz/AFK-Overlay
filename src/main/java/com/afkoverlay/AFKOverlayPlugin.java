@@ -242,12 +242,7 @@ public class AFKOverlayPlugin extends Plugin {
             return false;
         }
 
-        // Use isInteracting() method from Actor class for more accurate interaction detection
-        if (player.isInteracting()) {
-            return false;
-        }
-
-        // If no animation, pose is idle, and not interacting, player is idle
+        // If no animation and pose is idle, player is idle
         return true;
     }
 
