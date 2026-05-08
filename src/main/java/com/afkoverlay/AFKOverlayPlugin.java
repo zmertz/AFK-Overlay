@@ -242,7 +242,7 @@ public class AFKOverlayPlugin extends Plugin {
             return false;
         }
 
-        // If no animation, pose is idle, and not interacting, player is idle
+        // If no animation and pose is idle, player is idle
         return true;
     }
 
