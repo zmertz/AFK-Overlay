@@ -297,6 +297,15 @@ default boolean showHp() { return true; }
     )
     default boolean playIdleSound() { return false; }
 
+    @ConfigItem(
+        keyName = "muteIdleSoundWhenFocused",
+        name = "Mute idle sound when focused",
+        description = "Do not play the idle sound while the RuneLite window is focused.",
+        section = statusSection,
+        position = 6
+    )
+    default boolean muteIdleSoundWhenFocused() { return false; }
+
     // --- Window Settings Section ---
     @ConfigSection(
         name = "General Settings",

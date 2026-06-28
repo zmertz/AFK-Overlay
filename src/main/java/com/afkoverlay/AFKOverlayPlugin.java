@@ -311,6 +311,15 @@ public class AFKOverlayPlugin extends Plugin {
         return configManager.getConfig(AFKOverlayConfig.class);
     }
 
+    /**
+     * Returns true when a RuneLite window (the game client or the overlay) is the
+     * currently focused window of this JVM, meaning the user is actively looking
+     * at RuneLite rather than another application.
+     */
+    private boolean isRuneLiteFocused() {
+        return java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow() != null;
+    }
+
     private void checkThresholdsAndPlaySounds() {
         if (client.getGameState() != GameState.LOGGED_IN) {
             return;
@@ -359,7 +368,8 @@ public class AFKOverlayPlugin extends Plugin {
         }
 
         // Check Idle Status
-        if (config.playIdleSound() && playerInfo.isIdle()) {
+        if (config.playIdleSound() && playerInfo.isIdle()
+                && !(config.muteIdleSoundWhenFocused() && isRuneLiteFocused())) {
             playSound = true;
         }
 

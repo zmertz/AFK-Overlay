@@ -35,6 +35,7 @@ A RuneLite plugin that displays your player stats in a floating overlay window t
 ### Sounds
 - **Sound Volume**: Adjust the volume of the sound notifications.
 - **Play sound when threshold reached**: Individual toggles for HP, Prayer, Special Attack, Inventory, and Idle status.
+- **Mute idle sound when focused**: Suppress the idle sound while the RuneLite window is focused, so it only alerts you once you have tabbed away.
 
 ## Usage
 
