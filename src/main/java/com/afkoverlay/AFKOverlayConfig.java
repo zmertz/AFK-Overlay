@@ -242,6 +242,23 @@ default boolean showHp() { return true; }
     )
     default boolean playInvSound() { return false; }
 
+    // --- Enemy Health Section ---
+    @ConfigSection(
+        name = "Enemy Health",
+        description = "Show current target's health.",
+        position = 47
+    )
+    String enemyHealthSection = "enemyHealthSection";
+
+    @ConfigItem(
+        keyName = "showEnemyHealth",
+        name = "Show Enemy Health",
+        description = "Display the current target's health percentage in the overlay.",
+        section = enemyHealthSection,
+        position = 1
+    )
+    default boolean showEnemyHealth() { return true; }
+
     // --- Status Section ---
     @ConfigSection(
         name = "Status",

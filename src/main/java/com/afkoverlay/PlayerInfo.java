@@ -17,6 +17,8 @@ public class PlayerInfo {
         this.specialAttackEnergy = other.specialAttackEnergy;
         this.characterName = other.characterName;
         this.activeProtectionPrayer = other.activeProtectionPrayer;
+        this.enemyName = other.enemyName;
+        this.enemyHealthPercent = other.enemyHealthPercent;
     }
 
     private int currentHp = 0;
@@ -28,6 +30,8 @@ public class PlayerInfo {
     private int specialAttackEnergy = 0;
     private String characterName = "";
     private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
+    private String enemyName = "";
+    private int enemyHealthPercent = -1; // -1 means no target
 
     public int getHpPercentage() {
         if (maxHp == 0) return 0;
@@ -71,5 +75,16 @@ public String getSpecialAttackText() {
     
     public void setActiveProtectionPrayer(String prayer) {
         this.activeProtectionPrayer = prayer;
+    }
+
+    public String getEnemyHealthText() {
+        if (enemyHealthPercent < 0 || enemyName.isEmpty()) {
+            return "";
+        }
+        return String.format("%s: %d%%", enemyName, enemyHealthPercent);
+    }
+
+    public boolean hasEnemyTarget() {
+        return enemyHealthPercent >= 0 && !enemyName.isEmpty();
     }
 }

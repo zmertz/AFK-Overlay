@@ -147,7 +147,8 @@ public class AFKOverlayPlugin extends Plugin {
                 (event.getKey().equals("showHp") || 
                 event.getKey().equals("showPrayer") || 
                 event.getKey().equals("showStatus") || 
-                event.getKey().equals("showInventory"))) {
+                event.getKey().equals("showInventory") ||
+                event.getKey().equals("showEnemyHealth"))) {
                 if (floatingWindow != null) {
                     SwingUtilities.invokeLater(() -> floatingWindow.updateConfig());
                 }
@@ -215,6 +216,9 @@ public class AFKOverlayPlugin extends Plugin {
         
         // Update protection prayer
         updateProtectionPrayer(player);
+
+        // Update enemy health
+        updateEnemyHealth(player);
 
         // Update the floating window
         if (floatingWindow != null && (previousPlayerInfo == null || !previousPlayerInfo.equals(playerInfo))) {
@@ -304,6 +308,31 @@ public class AFKOverlayPlugin extends Plugin {
         
         playerInfo.setActiveProtectionPrayer(activePrayer);
         log.debug("Protection prayer: {}", activePrayer);
+    }
+
+    private void updateEnemyHealth(Player player) {
+        Actor target = player.getInteracting();
+        if (target instanceof NPC) {
+            NPC npc = (NPC) target;
+            String name = npc.getName();
+            int ratio = npc.getHealthRatio();
+            int scale = npc.getHealthScale();
+
+            if (name != null && ratio >= 0 && scale > 0) {
+                int healthPercent = (ratio * 100) / scale;
+                playerInfo.setEnemyName(name);
+                playerInfo.setEnemyHealthPercent(healthPercent);
+            } else if (name != null) {
+                // Target exists but no health bar visible yet
+                playerInfo.setEnemyName(name);
+            } else {
+                playerInfo.setEnemyName("");
+                playerInfo.setEnemyHealthPercent(-1);
+            }
+        } else {
+            playerInfo.setEnemyName("");
+            playerInfo.setEnemyHealthPercent(-1);
+        }
     }
 
     @Provides
