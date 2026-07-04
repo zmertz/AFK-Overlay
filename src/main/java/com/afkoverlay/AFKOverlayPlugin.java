@@ -51,6 +51,8 @@ public class AFKOverlayPlugin extends Plugin {
     private boolean windowClosedByUser = false;
     private Instant lastSoundPlayed = Instant.now();
     private static final int SOUND_ID = 3817;
+    // Tracks when the Dwarf Multicannon was deployed (null when no cannon)
+    private Instant cannonDeployedAt = null;
 
     @Override
     protected void startUp() throws Exception {
@@ -210,6 +212,9 @@ public class AFKOverlayPlugin extends Plugin {
         int specialAttackEnergy = client.getVarpValue(VarPlayer.SPECIAL_ATTACK_PERCENT) / 10;
         playerInfo.setSpecialAttackEnergy(specialAttackEnergy);
 
+        // Update Dwarf Multicannon state
+        updateCannonInfo();
+
         // Update character name
         updateCharacterName(player);
         
@@ -270,6 +275,28 @@ public class AFKOverlayPlugin extends Plugin {
             playerInfo.setInventoryUsedSlots(0);
             log.debug("Error getting inventory: {}", e.getMessage());
         }
+    }
+
+    private void updateCannonInfo() {
+        // VarPlayer.CANNON_STATE == 4 means fully assembled; CANNON_AMMO holds cannonballs.
+        // If these enum names fail to resolve, fall back to VarPlayerID.DROPCANNON / ROCKTHROWER
+        // (net.runelite.api.gameval) or client.getVarpValue(2)/getVarpValue(3).
+        boolean deployed = client.getVarpValue(VarPlayer.CANNON_STATE) == 4;
+        int ammo = client.getVarpValue(VarPlayer.CANNON_AMMO);
+
+        if (deployed) {
+            if (cannonDeployedAt == null) {
+                cannonDeployedAt = Instant.now();
+            }
+            long minutes = java.time.Duration.between(cannonDeployedAt, Instant.now()).toMinutes();
+            playerInfo.setCannonMinutesDeployed((int) minutes);
+            playerInfo.setCannonAmmo(ammo);
+        } else {
+            cannonDeployedAt = null;
+            playerInfo.setCannonMinutesDeployed(0);
+            playerInfo.setCannonAmmo(0);
+        }
+        playerInfo.setCannonDeployed(deployed);
     }
 
     private void updateCharacterName(Player player) {
@@ -360,6 +387,12 @@ public class AFKOverlayPlugin extends Plugin {
 
         // Check Idle Status
         if (config.playIdleSound() && playerInfo.isIdle()) {
+            playSound = true;
+        }
+
+        // Check Dwarf Cannon
+        if (config.playCannonSound()
+                && playerInfo.isCannonIdle(config.lowCannonAmmoThreshold(), config.cannonIdleThresholdMinutes())) {
             playSound = true;
         }
 
