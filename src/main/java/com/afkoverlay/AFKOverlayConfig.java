@@ -297,6 +297,71 @@ default boolean showHp() { return true; }
     )
     default boolean playIdleSound() { return false; }
 
+    // --- Dwarf Cannon Section ---
+    @ConfigSection(
+        name = "Dwarf Cannon",
+        description = "Show and alert on your deployed Dwarf Multicannon.",
+        position = 55
+    )
+    String cannonSection = "cannonSection";
+
+    @ConfigItem(
+        keyName = "showCannonStatus",
+        name = "Show Dwarf Cannon",
+        description = "Display cannon ammo and time deployed in the overlay.",
+        section = cannonSection,
+        position = 1
+    )
+    default boolean showCannonStatus() { return true; }
+
+    @ConfigItem(
+        keyName = "highlightCannonBackground",
+        name = "Highlight background when idle",
+        description = "Highlight background when the cannon is low on ammo or deployed too long.",
+        section = cannonSection,
+        position = 2
+    )
+    default boolean highlightCannonBackground() { return false; }
+
+    @ConfigItem(
+        keyName = "lowCannonAmmoThreshold",
+        name = "Ammo threshold",
+        description = "Alert when cannonballs are at or below this value.",
+        section = cannonSection,
+        position = 3
+    )
+    @Range(min = 0, max = 60)
+    default int lowCannonAmmoThreshold() { return 5; }
+
+    @ConfigItem(
+        keyName = "cannonIdleThresholdMinutes",
+        name = "Minutes deployed threshold",
+        description = "Alert when the cannon has been deployed for at least this many minutes (breaks at 25).",
+        section = cannonSection,
+        position = 4
+    )
+    @Range(min = 1, max = 35)
+    default int cannonIdleThresholdMinutes() { return 20; }
+
+    @Alpha
+    @ConfigItem(
+        keyName = "cannonOverlayColor",
+        name = "Threshold color",
+        description = "Background color when the cannon threshold is met.",
+        section = cannonSection,
+        position = 5
+    )
+    default Color cannonOverlayColor() { return new Color(0xFF3A2A05); }
+
+    @ConfigItem(
+        keyName = "playCannonSound",
+        name = "Play sound",
+        description = "Play a sound when the cannon threshold is met.",
+        section = cannonSection,
+        position = 6
+    )
+    default boolean playCannonSound() { return false; }
+
     // --- Window Settings Section ---
     @ConfigSection(
         name = "General Settings",
