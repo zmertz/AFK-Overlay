@@ -59,6 +59,7 @@ public class FloatingOverlayWindow extends JFrame {
     private JLabel statusLabel;
     private JLabel inventoryLabel;
     private JLabel specialAttackLabel;
+    private JLabel cannonLabel;
     private JPanel titleBar;
     private JLabel characterNameLabel;
     private Window runeliteWindow;
@@ -180,8 +181,11 @@ public class FloatingOverlayWindow extends JFrame {
             if (highlight) {
                 backgroundColor = config.invOverlayColor();
             }
+        } else if (config.highlightCannonBackground()
+                && playerInfo.isCannonIdle(config.lowCannonAmmoThreshold(), config.cannonIdleThresholdMinutes())) {
+            backgroundColor = config.cannonOverlayColor();
         }
-        
+
         return backgroundColor;
     }
     
@@ -191,6 +195,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel = createLabel("Status: ACTIVE", null);
         inventoryLabel = createLabel("", inventoryIcon);
         specialAttackLabel = createLabel("", specialAttackIcon);
+        cannonLabel = createLabel("", null);
     }
     
     private void setupLayout() {
@@ -204,6 +209,7 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showCannonStatus(), cannonLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
@@ -571,6 +577,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel.setVisible(config.showStatus());
         inventoryLabel.setVisible(config.showInventory());
         specialAttackLabel.setVisible(config.showSpecialAttack());
+        cannonLabel.setVisible(config.showCannonStatus());
         
         // Rebuild info panel
         rebuildInfoPanel();
@@ -594,6 +601,7 @@ public class FloatingOverlayWindow extends JFrame {
         addComponentIfVisible(config.showPrayer(), prayerLabel);
         addComponentIfVisible(config.showInventory(), inventoryLabel);
         addComponentIfVisible(config.showSpecialAttack(), specialAttackLabel);
+        addComponentIfVisible(config.showCannonStatus(), cannonLabel);
         addComponentIfVisible(config.showStatus(), statusLabel);
         
         contentPanel.add(infoPanel, BorderLayout.CENTER);
@@ -605,6 +613,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel.setForeground(Constants.DARK_TEXT_COLOR);
         inventoryLabel.setForeground(Constants.DARK_TEXT_COLOR);
         specialAttackLabel.setForeground(Constants.DARK_TEXT_COLOR);
+        cannonLabel.setForeground(Constants.DARK_TEXT_COLOR);
         characterNameLabel.setForeground(Constants.DARK_TEXT_COLOR);
     }
     
@@ -726,6 +735,7 @@ private void loadIcons() {
     updateStatusDisplay();
     updateInventoryDisplay();
     updateSpecialAttackDisplay();
+    updateCannonDisplay();
     contentPanel.repaint();
         });
     }
@@ -783,6 +793,15 @@ private void loadIcons() {
         }
     }
     
+    private void updateCannonDisplay() {
+        if (config.showCannonStatus()) {
+            cannonLabel.setText("Cannon: " + playerInfo.getCannonText());
+            boolean idle = playerInfo.isCannonIdle(
+                config.lowCannonAmmoThreshold(), config.cannonIdleThresholdMinutes());
+            cannonLabel.setForeground(idle ? Constants.WARNING_COLOR : Constants.DARK_TEXT_COLOR);
+        }
+    }
+
     private Color getColorForPercentage(int percentage, Color defaultColor) {
         if (percentage <= 10) {
             return Constants.DANGER_COLOR;
@@ -848,7 +867,8 @@ private void loadIcons() {
         updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
         updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
         updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
-        
+        updateLabelSize(config.showCannonStatus(), cannonLabel, newFont, null, iconSize);
+
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
         
@@ -900,6 +920,7 @@ private void loadIcons() {
         if (config.showPrayer()) componentCount++;
         if (config.showInventory()) componentCount++;
         if (config.showSpecialAttack()) componentCount++;
+        if (config.showCannonStatus()) componentCount++;
         if (config.showStatus()) componentCount++;
         
         // Each component needs space for itself plus spacing
