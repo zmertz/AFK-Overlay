@@ -380,21 +380,21 @@ public class FloatingOverlayWindow extends JFrame {
             
             @Override
             public void mouseReleased(MouseEvent e) {
+                boolean wasDragging = isDragging;
+                boolean wasResizing = isResizing;
+
                 if (isDragging || isResizing) {
                     savePositionAndSize();
                     validatePosition();
                     updateComponentSizes();
                 }
-                
+
                 isDragging = false;
                 isResizing = false;
                 resizeEdge = 0;
                 setCursor(Cursor.getDefaultCursor());
-            }
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 && !isResizing && !isDragging) {
+
+                if (e.getButton() == MouseEvent.BUTTON1 && !wasDragging && !wasResizing) {
                     focusRuneLiteWindow();
                 }
             }
