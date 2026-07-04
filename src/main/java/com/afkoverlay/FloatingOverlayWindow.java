@@ -69,6 +69,7 @@ public class FloatingOverlayWindow extends JFrame {
     private BufferedImage prayerIcon;
     private BufferedImage inventoryIcon;
     private BufferedImage specialAttackIcon;
+    private BufferedImage cannonIcon;
     private BufferedImage protectMeleeIcon;
     private BufferedImage protectMagicIcon;
     private BufferedImage protectRangedIcon;
@@ -195,7 +196,7 @@ public class FloatingOverlayWindow extends JFrame {
         statusLabel = createLabel("Status: ACTIVE", null);
         inventoryLabel = createLabel("", inventoryIcon);
         specialAttackLabel = createLabel("", specialAttackIcon);
-        cannonLabel = createLabel("", null);
+        cannonLabel = createLabel("", cannonIcon);
     }
     
     private void setupLayout() {
@@ -704,6 +705,7 @@ private void loadIcons() {
     prayerIcon = loadIcon("/com/icons/Prayer_icon.png", Constants.PRAYER_COLOR);
     inventoryIcon = loadIcon("/com/icons/Inventory.png", new Color(150, 150, 150));
     specialAttackIcon = loadIcon("/com/icons/Special_attack_orb.png", new Color(150, 150, 150));
+    cannonIcon = loadIcon("/com/icons/Cannonball.png", new Color(150, 150, 150));
         
         // Load protection prayer icons
         protectMeleeIcon = loadIcon("/com/icons/prayers/Protect_from_Melee.png", new Color(255, 100, 100));
@@ -867,7 +869,7 @@ private void loadIcons() {
         updateLabelSize(config.showStatus(), statusLabel, newFont, null, iconSize);
         updateLabelSize(config.showInventory(), inventoryLabel, newFont, inventoryIcon, iconSize);
         updateLabelSize(config.showSpecialAttack(), specialAttackLabel, newFont, specialAttackIcon, iconSize);
-        updateLabelSize(config.showCannonStatus(), cannonLabel, newFont, null, iconSize);
+        updateLabelSize(config.showCannonStatus(), cannonLabel, newFont, cannonIcon, iconSize);
 
         // Update character name label
         characterNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
