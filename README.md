@@ -9,6 +9,7 @@ A RuneLite plugin that displays your player stats in a floating overlay window t
 - **Prayer**: Current/Max with percentage and color coding  
 - **Special Attack**: Current percentage with color coding
 - **Inventory**: Used slots out of 28 with percentage
+- **Dwarf Cannon**: Cannonball count and minutes deployed (shows "Not deployed" when no cannon is set up)
 - **Status**: Shows if you're Active or Idle
 - **Character Name**: Displays at the top of the overlay
 
@@ -34,7 +35,7 @@ A RuneLite plugin that displays your player stats in a floating overlay window t
 
 ### Sounds
 - **Sound Volume**: Adjust the volume of the sound notifications.
-- **Play sound when threshold reached**: Individual toggles for HP, Prayer, Special Attack, Inventory, and Idle status.
+- **Play sound when threshold reached**: Individual toggles for HP, Prayer, Special Attack, Inventory, Dwarf Cannon, and Idle status.
 
 ## Usage
 
