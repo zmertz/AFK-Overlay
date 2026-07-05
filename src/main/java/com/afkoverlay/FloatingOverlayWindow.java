@@ -61,7 +61,6 @@ public class FloatingOverlayWindow extends JFrame {
     private JLabel specialAttackLabel;
     private JPanel titleBar;
     private JLabel characterNameLabel;
-    private Window runeliteWindow;
     
     // Icons
     private BufferedImage hpIcon;
@@ -107,13 +106,6 @@ public class FloatingOverlayWindow extends JFrame {
         setType(Type.NORMAL);
         setResizable(false);
         setBackground(new Color(0, 0, 0, 0));
-        
-        // Try to find the RuneLite window
-        try {
-            this.runeliteWindow = findRuneLiteWindow();
-        } catch (Exception e) {
-            // Ignore if we can't find it
-        }
     }
     
     private void setupContentPanel() {
@@ -380,9 +372,6 @@ public class FloatingOverlayWindow extends JFrame {
             
             @Override
             public void mouseReleased(MouseEvent e) {
-                boolean wasDragging = isDragging;
-                boolean wasResizing = isResizing;
-
                 if (isDragging || isResizing) {
                     savePositionAndSize();
                     validatePosition();
@@ -393,10 +382,6 @@ public class FloatingOverlayWindow extends JFrame {
                 isResizing = false;
                 resizeEdge = 0;
                 setCursor(Cursor.getDefaultCursor());
-
-                if (e.getButton() == MouseEvent.BUTTON1 && !wasDragging && !wasResizing) {
-                    focusRuneLiteWindow();
-                }
             }
         });
         
@@ -626,66 +611,6 @@ public class FloatingOverlayWindow extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 characterNameLabel.setText(name != null ? name : "");
             });
-        }
-    }
-    
-    private Window findRuneLiteWindow() {
-        try {
-            // Try to get parent window first (most reliable)
-            Window parent = SwingUtilities.getWindowAncestor(this);
-            if (parent instanceof JFrame && parent.isVisible()) {
-                String title = ((JFrame) parent).getTitle();
-                if (title != null && title.toLowerCase().contains("runelite")
-                        && !title.toLowerCase().contains("starting")
-                        && !title.toLowerCase().contains("plugin")
-                        && parent.getWidth() > 400 && parent.getHeight() > 400) {
-                    return parent;
-                }
-            }
-            
-            // Fallback: search all windows
-            for (Window window : Window.getWindows()) {
-                if (window instanceof JFrame && window.isVisible()) {
-                    String title = ((JFrame) window).getTitle();
-                    if (title != null && title.toLowerCase().contains("runelite")
-                            && !title.toLowerCase().contains("starting")
-                            && !title.toLowerCase().contains("plugin")
-                            && window.getWidth() > 400 && window.getHeight() > 400) {
-                        return window;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // Ignore any errors
-        }
-        return null;
-    }
-    
-    private void focusRuneLiteWindow() {
-        try {
-            Window targetWindow = runeliteWindow;
-            if (targetWindow == null) {
-                targetWindow = findRuneLiteWindow();
-            }
-            
-            if (targetWindow != null) {
-                // Unminimize if needed
-                if (targetWindow instanceof Frame) {
-                    Frame frame = (Frame) targetWindow;
-                    if (frame.getState() == Frame.ICONIFIED) {
-                        frame.setState(Frame.NORMAL);
-                    }
-                }
-                
-                // Bring to front and focus
-                targetWindow.setVisible(true);
-                targetWindow.toFront();
-                targetWindow.requestFocus();
-                targetWindow.requestFocusInWindow();
-                targetWindow.requestFocus();
-            }
-        } catch (Exception e) {
-            // Ignore any errors
         }
     }
     
