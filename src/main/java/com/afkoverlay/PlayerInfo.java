@@ -17,6 +17,9 @@ public class PlayerInfo {
         this.specialAttackEnergy = other.specialAttackEnergy;
         this.characterName = other.characterName;
         this.activeProtectionPrayer = other.activeProtectionPrayer;
+        this.cannonDeployed = other.cannonDeployed;
+        this.cannonAmmo = other.cannonAmmo;
+        this.cannonMinutesDeployed = other.cannonMinutesDeployed;
     }
 
     private int currentHp = 0;
@@ -28,6 +31,9 @@ public class PlayerInfo {
     private int specialAttackEnergy = 0;
     private String characterName = "";
     private String activeProtectionPrayer = ""; // "melee", "magic", "ranged", or empty string
+    private boolean cannonDeployed = false;
+    private int cannonAmmo = 0;
+    private int cannonMinutesDeployed = 0;
 
     public int getHpPercentage() {
         if (maxHp == 0) return 0;
@@ -64,6 +70,20 @@ public int getSpecialAttackEnergyPercentage() {
 public String getSpecialAttackText() {
     return String.format("%d%%", specialAttackEnergy);
 }
+
+    public String getCannonText() {
+        if (!cannonDeployed) {
+            return "Not deployed";
+        }
+        return String.format("%d (%dm)", cannonAmmo, cannonMinutesDeployed);
+    }
+
+    public boolean isCannonIdle(int ammoThreshold, int minutesThreshold) {
+        if (!cannonDeployed) {
+            return false;
+        }
+        return cannonAmmo <= ammoThreshold || cannonMinutesDeployed >= minutesThreshold;
+    }
     
     public String getActiveProtectionPrayer() {
         return activeProtectionPrayer;
