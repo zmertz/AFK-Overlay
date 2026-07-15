@@ -10,6 +10,7 @@ A RuneLite plugin that displays your player stats in a floating overlay window t
 - **Special Attack**: Current percentage with color coding
 - **Inventory**: Used slots out of 28 with percentage
 - **Status**: Shows if you're Active or Idle
+- **Random Event**: Shows what random event (if any) is currently active
 - **Character Name**: Displays at the top of the overlay
 
 ### **Sound Notifications**

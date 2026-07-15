@@ -1,11 +1,15 @@
 package com.afkoverlay;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.InteractingChanged;
+import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.PlayerChanged;
+import net.runelite.api.gameval.NpcID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -18,6 +22,8 @@ import javax.inject.Inject;
 import javax.swing.SwingUtilities;
 import java.awt.Image;
 import java.time.Instant;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @PluginDescriptor(
@@ -26,6 +32,32 @@ import java.time.Instant;
     tags = {"overlay", "player", "stats", "afk"}
 )
 public class AFKOverlayPlugin extends Plugin {
+
+    private static final Set<Integer> EVENT_NPCS = ImmutableSet.of(
+            NpcID.MACRO_BEEKEEPER_INVITATION,
+            NpcID.MACRO_COMBILOCK_PIRATE,
+            NpcID.MACRO_JEKYLL, NpcID.MACRO_JEKYLL_UNDERWATER,
+            NpcID.MACRO_DWARF,
+            NpcID.PATTERN_INVITATION,
+            NpcID.MACRO_EVIL_BOB_OUTSIDE, NpcID.MACRO_EVIL_BOB_PRISON,
+            NpcID.PINBALL_INVITATION,
+            NpcID.MACRO_FORESTER_INVITATION,
+            NpcID.MACRO_FROG_CRIER,
+            NpcID.MACRO_GENI, NpcID.MACRO_GENI_UNDERWATER,
+            NpcID.MACRO_GILES, NpcID.MACRO_GILES_UNDERWATER,
+            NpcID.MACRO_GRAVEDIGGER_INVITATION,
+            NpcID.MACRO_MILES, NpcID.MACRO_MILES_UNDERWATER,
+            NpcID.MACRO_MYSTERIOUS_OLD_MAN, NpcID.MACRO_MYSTERIOUS_OLD_MAN_UNDERWATER,
+            NpcID.MACRO_MAZE_INVITATION, NpcID.MACRO_MIME_INVITATION,
+            NpcID.MACRO_NILES, NpcID.MACRO_NILES_UNDERWATER,
+            NpcID.MACRO_PILLORY_GUARD,
+            NpcID.GRAB_POSTMAN,
+            NpcID.MACRO_MAGNESON_INVITATION,
+            NpcID.MACRO_HIGHWAYMAN, NpcID.MACRO_HIGHWAYMAN_UNDERWATER,
+            NpcID.MACRO_SANDWICH_LADY_NPC,
+            NpcID.MACRO_DRILLDEMON_INVITATION,
+            NpcID.MACRO_COUNTCHECK_SURFACE, NpcID.MACRO_COUNTCHECK_UNDERWATER
+    );
 
     @Inject
     private Client client;
@@ -51,6 +83,9 @@ public class AFKOverlayPlugin extends Plugin {
     private boolean windowClosedByUser = false;
     private Instant lastSoundPlayed = Instant.now();
     private static final int SOUND_ID = 3817;
+
+    private Optional<NPC> currentRandomEvent = Optional.empty();
+
 
     @Override
     protected void startUp() throws Exception {
@@ -109,6 +144,8 @@ public class AFKOverlayPlugin extends Plugin {
                 floatingWindow = null;
             });
         }
+
+        currentRandomEvent = Optional.empty();
     }
 
     @Subscribe
@@ -215,6 +252,8 @@ public class AFKOverlayPlugin extends Plugin {
         
         // Update protection prayer
         updateProtectionPrayer(player);
+
+        playerInfo.setCurrentRandomEvent(currentRandomEvent.map(NPC::getName).orElse(null));
 
         // Update the floating window
         if (floatingWindow != null && (previousPlayerInfo == null || !previousPlayerInfo.equals(playerInfo))) {
@@ -372,4 +411,39 @@ public class AFKOverlayPlugin extends Plugin {
             preferences.setSoundEffectVolume(previousVolume);
         }
     }
+
+    @Subscribe
+    public void onInteractingChanged(InteractingChanged event)
+    {
+        Actor source = event.getSource();
+        Actor target = event.getTarget();
+        Player player = client.getLocalPlayer();
+
+        // Check that the npc is interacting with the player and the player isn't interacting with the npc, so
+        // that the notification doesn't fire from talking to other user's randoms
+        if (player == null
+                || target != player
+                || player.getInteracting() == source
+                || !(source instanceof NPC)
+                || !EVENT_NPCS.contains(((NPC) source).getId()))
+        {
+            return;
+        }
+
+        log.debug("Random event spawn: {}", source.getName());
+
+        currentRandomEvent = Optional.of((NPC) source);
+    }
+
+    @Subscribe
+    public void onNpcDespawned(NpcDespawned npcDespawned)
+    {
+        NPC npc = npcDespawned.getNpc();
+
+        if (currentRandomEvent.isPresent() && npc == currentRandomEvent.get())
+        {
+            currentRandomEvent = Optional.empty();
+        }
+    }
+
 }
